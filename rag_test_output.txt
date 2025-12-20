@@ -10,34 +10,37 @@ TESTING RAG PIPELINE WITH QUERY: Lái xe máy không đội mũ bảo hiểm b�
 
 [STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...
 --------------------------------------------------------------------------------
-✓ Found 100 documents from hybrid search (processing...)
+✓ Found 30 documents from hybrid search (processing...)
 
 
 ================================================================================
 [STEP 2] Reranking with LLM (gpt-5.1)...
 --------------------------------------------------------------------------------
 ✓ Reranking complete
-✓ Selected top 10 documents with highest scores: 10 documents
-✓ Verification: Exactly 10 documents (or all available if < 10)? True
+✓ Selected top 7 documents with highest scores: 7 documents
+✓ Verification: Exactly 7 documents (or all available if < 7)? True
 
 ================================================================================
-TOP 10 RERANKED DOCUMENTS (highest scores, sorted by score)
+TOP 7 RERANKED DOCUMENTS (highest scores, sorted by score)
 ================================================================================
 
-1. █████████ 9.5/10
-   Title: Xử phạt các hành vi vi phạm khác về quy tắc giao thông đường bộ
-   Article: 11
-   Content: Xử phạt các hành vi vi phạm khác về quy tắc giao thông đường bộ
-3. Phạt tiền từ 200.000 đồng đến 300.000 đồng đối với người được chở trên xe mô tô, xe gắn 
-máy (kể cả xe máy điện), các loại xe tương tự xe mô tô, các loại xe tương tự xe gắn máy, xe đạp 
-máy (kể cả xe đạp điện) không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ bảo 
-hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi tham gia giao thông trên 
-đường bộ.
-
-2. █████████ 9.5/10
+1. ██████████ 10.0/10
    Title: Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe
    Article: 6
-   Content: g) Xe không được quyền ưu tiên lắp đặt, sử dụng thiết bị phát tín hiệu của xe được quyền ưu 
+   Content: Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe
+2. Phạt tiền từ 200.000 đồng đến 300.000 đồng đối với người điều khiển xe thực hiện một trong 
+các hành vi vi phạm sau đây: 
+a) Dừng xe, đỗ xe trên phần đường xe chạy ở đoạn đường ngoài đô thị nơi có lề đường; 
+b) Không giảm tốc độ và nhường đường khi điều khiển xe chạy từ trong ngõ, đường nhánh ra 
+đường chính; 
+c) Điều khiển xe chạy quá tốc độ quy định từ 05 km/h đến dưới 10 km/h; 
+d) Điều khiển xe chạy tốc độ thấp mà không đi bên phải phần đường xe chạy gây cản trở giao 
+thông; 
+đ) Dừng xe, đỗ xe ở lòng đường đô thị gây cản trở giao thông; tụ tập từ 03 xe trở lên ở lòng 
+đường, trong hầm đường bộ; đỗ, để xe ở lòng đường đô thị, hè phố trái quy định của pháp luật; 
+e) Không nhường đường cho xe xin vượt khi có đủ điều kiện an toàn; không nhường đường cho 
+xe đi trên đường ưu tiên, đường chính từ bất kỳ hướng nào tới tại nơi đường giao nhau; 
+g) Xe không được quyền ưu tiên lắp đặt, sử dụng thiết bị phát tín hiệu của xe được quyền ưu 
 tiên; 
 h) Dừng xe, đỗ xe trên đường xe điện, điểm dừng đón trả khách của xe buýt, nơi đường bộ giao 
 nhau, trên phần đường dành cho người đi bộ qua đường; dừng xe nơi có biển “Cấm dừng xe và 
@@ -50,7 +53,45 @@ mô tô, xe máy” không cài quai đúng quy cách khi điều khiển xe tha
 bộ; 
 k) Chở người ngồi trên xe không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ 
 bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách, trừ trường hợp chở người 
-bệnh đi cấp cứu,
+bệnh đi cấp cứu, trẻ em dưới 06 tuổi, áp giải người có hành vi vi phạm pháp luật; 
+l) Chở theo 02 người trên xe, trừ trường hợp chở người bệnh đi cấp cứu, trẻ em dưới 14 tuổi, áp 
+giải người có hành vi vi phạm pháp luật; 
+m) Ngồi phía sau vòng tay qua người ngồi trước để điều khiển xe, trừ trường hợp chở trẻ em 
+ngồi phía trước.
+
+2. ████████ 8.5/10
+   Title: Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô
+   Article: 7
+   Content: Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô
+2. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với người điều khiển 
+xe thực hiện một trong các hành vi vi phạm sau đây: 
+a) Dừng xe, đỗ xe trên phần đường xe chạy ở đoạn đường ngoài đô thị nơi 
+có lề đường; 
+b) Điều khiển xe chạy quá tốc độ quy định từ 05 km/h đến dưới 10 km/h; 
+c) Điều khiển xe chạy tốc độ thấp mà không đi bên phải phần đường xe 
+chạy gây cản trở giao thông; 
+d) Dừng xe, đỗ xe ở lòng đường gây cản trở giao thông; tụ tập từ 03 xe trở 
+lên ở lòng đường, trong hầm đường bộ; đỗ, để xe ở lòng đường, vỉa hè trái phép; 
+đ) Xe không được quyền ưu tiên lắp đặt, sử dụng thiết bị phát tín hiệu của 
+xe được quyền ưu tiên; 
+e) Dừng xe, đỗ xe trên điểm đón, trả khách, nơi đường bộ giao nhau, trên 
+phần đường dành cho người đi bộ qua đường; dừng xe nơi có biển “Cấm dừng 
+xe và đỗ xe”; đỗ xe tại nơi có biển “Cấm đỗ xe” hoặc biển “Cấm dừng xe và đỗ 
+xe”; không tuân thủ các quy định về dừng xe, đỗ xe tại nơi đường bộ giao nhau 
+cùng mức với đường sắt; dừng xe, đỗ xe trong phạm vi hành lang an toàn giao 
+thông đường sắt; 
+g) Chở theo 02 người trên xe, trừ trường hợp chở người bệnh đi cấp cứu, 
+trẻ em dưới 12 tuổi, người già yếu hoặc người khuyết tật, áp giải người có hành 
+vi vi phạm pháp luật; 
+h) Không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ 
+bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi điều 
+khiển xe tham gia giao thông trên đường bộ; 
+i) Chở người ngồi trên xe không đội “mũ bảo hiểm cho người đi mô tô, xe 
+máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng 
+quy cách, trừ trường hợp chở người bệnh đi cấp cứu, trẻ em dưới 06 tuổi, áp giải 
+người có hành vi vi phạm pháp luật; 
+k) Quay đầu xe tại nơi không được quay đầu xe, trừ hành vi vi phạm quy 
+định tại điểm d khoản 4 Điều này.
 
 3. ████████ 8.5/10
    Title: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
@@ -74,33 +115,39 @@ bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy c�
 khiển xe tham gia giao thông trên đường bộ; 
 o) Chở người ngồi trên xe không đội “mũ bảo hiểm cho người  đi mô tô, 
 xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài quai 
-đúng quy cách,
-
-4. █████ 5.0/10
-   Title: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
-   Article: 4a
-   Content: xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài quai 
 đúng quy cách, trừ trường hợp chở người bệnh đi cấp cứu, trẻ em dưới 06 tuổi, áp 
 giải người có hành vi vi phạm pháp luật.”; 
 c) Sửa đổi khoản 5 Điều 6 như sau: 
-“5.
+“5. Phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng đối với người điều 
+khiển xe thực hiện một trong các hành vi vi phạm sau đây: 
+a) Đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển 
+“Cấm đi ngược chiều”, trừ hành vi vi phạm quy định tại điểm b khoản 6 Điều này 
+và các trường hợp xe ưu tiên đang đi làm nhiệm vụ khẩn cấp theo quy định; 
+b) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang 
+phát tín hiệu ưu tiên đi làm nhiệm vụ.”; 
+d) Sửa đổi điểm c khoản 10 Điều 6 như sau: 
+“c) Thực hiện hành vi quy định tại điểm a khoản 6; điểm a, điểm b khoản 7; 
+điểm a, điểm b, điểm c, điểm d khoản 8 Điều này bị tước quyền sử dụng Giấy 
+phép lái xe từ 02 tháng đến 04 tháng; tái phạm hoặc vi phạm nhiều lần hành vi 
+quy định tại điểm a, điểm b, điểm c, điểm d khoản 8 Điều này bị tịch thu phương 
+tiện. Thực hiện hành vi quy định tại một trong các điểm, khoản sau của Điều 
+này mà gây tai nạn giao thông thì bị tước quyền sử dụng Giấy phép lái xe từ 02 
+tháng đến 04 tháng: điểm a, điểm g, điểm h, điểm k, điểm l, điểm m, điểm n, điểm 
+q khoản 1; điểm b, điểm d, điểm e, điểm g, điểm l , điểm m khoản 2; điểm a, 
+điểm b, điểm c, điểm k, điểm m khoản 3; điểm e, điểm g, điểm h khoản 4; điểm 
+b khoản 5 Điều này;”.
 
-5. ████ 4.0/10
-   Title: Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác
-   Article: 12
-   Content: Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác
-5. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với người được chở 
-trên xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô, các loại xe tương tự xe 
-gắn máy thực hiện một trong các hành vi vi phạm sau đây: 
-30 
- 
-a) Bám, kéo, đẩy xe khác, vật khác, dẫn dắt vật nuôi, mang vác vật cồng 
-kềnh, đứng trên yên, giá đèo hàng hoặc ngồi trên tay lái của xe; 
-b) Không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ 
-bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi tham 
-gia giao thông trên đường bộ.
+4. ███████ 7.5/10
+   Title: Xử phạt các hành vi vi phạm khác về quy tắc giao thông đường bộ
+   Article: 11
+   Content: Xử phạt các hành vi vi phạm khác về quy tắc giao thông đường bộ
+3. Phạt tiền từ 200.000 đồng đến 300.000 đồng đối với người được chở trên xe mô tô, xe gắn 
+máy (kể cả xe máy điện), các loại xe tương tự xe mô tô, các loại xe tương tự xe gắn máy, xe đạp 
+máy (kể cả xe đạp điện) không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ bảo 
+hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi tham gia giao thông trên 
+đường bộ.
 
-6. ████ 4.0/10
+5. ██████ 6.5/10
    Title: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
    Article: 4a
    Content: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
@@ -115,27 +162,22 @@ b) Không đội “mũ bảo hiểm  cho người đi mô tô, xe máy” hoặ
 bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi tham 
 gia giao thông trên đường bộ.”.
 
-7. ███ 3.0/10
-   Title: Xử phạt người điều khiển xe đạp, xe đạp máy, người điều
-   Article: 9
-   Content: Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với người điều khiển 
-xe thực hiện một trong các hành vi vi phạm sau đây: 
-a) Gây tai nạn giao thông không dừng ngay phương tiện, không giữ 
-nguyên hiện trường, không trợ giúp người bị nạn, không ở lại hiện trường hoặc 
-không đến trình báo ngay với cơ quan công an, Ủy ban nhân dân nơi gần nhất; 
-b) Điều khiển xe trên đường mà trong máu hoặc hơi thở có nồng độ cồn 
-vượt quá 80 miligam/100 mililít máu hoặc vượt quá 0,4 miligam/1 lít khí thở; 
-c) Không chấp hành yêu cầu kiểm tra về nồng độ cồn của người thi hành 
-công vụ; 
-d) Người điều khiển xe đạp máy không đội “mũ bảo hiểm cho người đi 
-mô tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài 
-quai đúng quy cách khi tham gia giao thông trên đường bộ; 
-đ) Chở người ngồi trên xe đạp máy không đội “mũ bảo hiểm cho người đi 
-mô tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài 
-quai đúng quy cách, trừ trường hợp chở người bệnh đi cấp cứu, trẻ em dưới 06 
-tuổi, áp giải người có hành vi vi phạm pháp luật.
+6. ██████ 6.0/10
+   Title: Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác
+   Article: 12
+   Content: Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác
+5. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với người được chở 
+trên xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô, các loại xe tương tự xe 
+gắn máy thực hiện một trong các hành vi vi phạm sau đây: 
+30 
+ 
+a) Bám, kéo, đẩy xe khác, vật khác, dẫn dắt vật nuôi, mang vác vật cồng 
+kềnh, đứng trên yên, giá đèo hàng hoặc ngồi trên tay lái của xe; 
+b) Không đội “mũ bảo hiểm cho người đi mô tô, xe máy” hoặc đội “mũ 
+bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách khi tham 
+gia giao thông trên đường bộ.
 
-8. ███ 3.0/10
+7. ███ 3.5/10
    Title: Xử phạt người điều khiển xe đạp, xe đạp máy (kể cả xe đạp điện), người điều khiển
    Article: 8
    Content: Xử phạt người điều khiển xe đạp, xe đạp máy (kể cả xe đạp điện), người điều khiển
@@ -151,41 +193,23 @@ tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe m
 khi tham gia giao thông trên đường bộ; 
 đ) Chở người ngồi trên xe đạp máy (kể cả xe đạp điện) không đội “mũ bảo hiểm cho người đi mô 
 tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe máy” không cài quai đúng quy cách, 
-trừ trường hợp chở người bệnh đi cấp cứu,
-
-9. ██ 2.0/10
-   Title: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
-   Article: 4a
-   Content: Hành vi vi phạm hành chính  đã kết thúc, hành vi vi phạm
-6. Bổ sung điểm đ, điểm e vào sau điểm d khoản 4 Điều 8 như sau: 
-“đ) Người điều khiển xe đạp máy (kể cả xe đạp điện) không đội “mũ bảo 
-hiểm cho người đi mô tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, xe 
-máy” không cài quai đúng quy cách khi tham gia giao thông trên đường bộ; 
-e) Chở người ngồi trên xe đạp máy (kể cả xe đạp điện) không đội “mũ bảo 
-hiểm cho người đi mô tô, xe máy” hoặc đội “mũ bảo hiểm cho người đi mô tô, 
-xe máy” không cài quai đúng quy cách, trừ trường hợp chở người bệnh đi cấp 
-cứu, trẻ em dưới 06 tuổi, áp giải người có hành vi vi phạm pháp luật.”.
-
-10.  0.0/10
-   Title: Xử phạt các hành vi vi phạm quy định về điều kiện của
-   Article: 19
-   Content: Xử phạt các hành vi vi phạm quy định về điều kiện của
-1. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với người điều khiển 
-xe máy chuyên dùng không có chứng nhận bảo hiểm bắt buộc trách nhiệm dân 
-sự theo quy định của pháp luật.
+trừ trường hợp chở người bệnh đi cấp cứu, trẻ em dưới 06 tuổi, áp giải người có hành vi vi phạm 
+pháp luật; 
+e) Điều khiển xe trên đường mà trong máu hoặc hơi thở có nồng độ cồn vượt quá 50 miligam 
+đến 80 miligam/100 mililít máu hoặc vượt quá 0,25 miligam đến 0,4 miligam/1 lít khí thở.
 
 ================================================================================
 SUMMARY STATISTICS
 ================================================================================
-Original hybrid search results: 100
-After reranking (top 10 by score): 10
+Original hybrid search results: 30
+After reranking (top 7 by score): 7
 
 [VERIFICATION]
 ✓ Scores sorted in descending order? True
-✓ Document count <= 10? True
-Average rerank score: 4.85
-Max score: 9.50
-Min score: 0.00
+✓ Document count <= 7? True
+Average rerank score: 7.21
+Max score: 10.00
+Min score: 3.50
 
 ================================================================================
 

@@ -46,23 +46,23 @@ async def test_rag_pipeline(query: str):
     print_output("\n[STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...")
     print_output("-" * 80)
     
-    search_results = qdrant_service.hybrid_search(query, limit=100)
+    search_results = qdrant_service.hybrid_search(query, limit=30)
     print_output(f"✓ Found {len(search_results)} documents from hybrid search (processing...)\n")
     
     # Step 2: Reranking with LLM
     print_output("\n" + "=" * 80)
-    print_output("[STEP 2] Reranking with LLM (gpt-5.1)...")
+    print_output("[STEP 2] Reranking with LLM (gpt-4.1-mini)...")
     print_output("-" * 80)
     
-    reranked_docs = await reranker_service.rerank(query, search_results, top_k=10)
+    reranked_docs = await reranker_service.rerank(query, search_results, top_k=7)
     
     print_output(f"✓ Reranking complete")
-    print_output(f"✓ Selected top 10 documents with highest scores: {len(reranked_docs)} documents")
-    print_output(f"✓ Verification: Exactly 10 documents (or all available if < 10)? {len(reranked_docs) <= 10}\n")
+    print_output(f"✓ Selected top 7 documents with highest scores: {len(reranked_docs)} documents")
+    print_output(f"✓ Verification: Exactly 7 documents (or all available if < 7)? {len(reranked_docs) <= 7}\n")
     
     # Step 3: Display Results
     print_output("=" * 80)
-    print_output("TOP 10 RERANKED DOCUMENTS (highest scores, sorted by score)")
+    print_output("TOP 7 RERANKED DOCUMENTS (highest scores, sorted by score)")
     print_output("=" * 80)
     
     if reranked_docs:
@@ -83,14 +83,14 @@ async def test_rag_pipeline(query: str):
     print_output("SUMMARY STATISTICS")
     print_output("=" * 80)
     print_output(f"Original hybrid search results: {len(search_results)}")
-    print_output(f"After reranking (top 10 by score): {len(reranked_docs)}")
+    print_output(f"After reranking (top 7 by score): {len(reranked_docs)}")
     
     # Verify filtering and limit
     print_output("\n[VERIFICATION]")
     if reranked_docs:
         scores = [doc.get("rerank_score", 0) for doc in reranked_docs]
         print_output(f"✓ Scores sorted in descending order? {all(scores[i] >= scores[i+1] for i in range(len(scores)-1))}")
-        print_output(f"✓ Document count <= 10? {len(reranked_docs) <= 10}")
+        print_output(f"✓ Document count <= 7? {len(reranked_docs) <= 7}")
         print_output(f"Average rerank score: {sum(scores) / len(scores):.2f}")
         print_output(f"Max score: {max(scores):.2f}")
         print_output(f"Min score: {min(scores):.2f}")

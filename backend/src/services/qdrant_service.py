@@ -1,4 +1,7 @@
 import os
+# Giới hạn số luồng cho ONNX Runtime để tránh ngốn RAM quá nhanh
+os.environ["OMP_NUM_THREADS"] = "1" 
+os.environ["ONNXRUNTIME_INTRA_OP_NUM_THREADS"] = "1"
 import logging
 from typing import List, Dict, Any
 from pathlib import Path
@@ -6,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding
+from src import config
 
 # Load .env from root folder
 root_env = Path(__file__).parent.parent.parent.parent.parent / ".env"
@@ -14,11 +18,11 @@ load_dotenv(root_env)
 logger = logging.getLogger(__name__)
 
 # Configuration
-QDRANT_URL = os.getenv("QDRANT_URL")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+QDRANT_URL = config.QDRANT_URL
+QDRANT_API_KEY = config.QDRANT_API_KEY
 COLLECTION_NAME = "traffic_law_qa_system"
-DENSE_MODEL_NAME = "intfloat/multilingual-e5-large"
-SPARSE_MODEL_NAME = "Qdrant/bm25"
+DENSE_MODEL_NAME = config.DENSE_MODEL_NAME
+SPARSE_MODEL_NAME = config.SPARSE_MODEL_NAME
 
 
 class QdrantService:

@@ -6,7 +6,7 @@ from src import config
 
 logger = logging.getLogger(__name__)
 
-RERANKER_MODEL = "gpt-5.1"
+RERANKER_MODEL = config.RERANKER_MODEL
 
 
 class RerankerService:
@@ -30,7 +30,7 @@ class RerankerService:
         self, 
         query: str, 
         documents: List[Dict[str, Any]], 
-        top_k: int = 10
+        top_k: int = config.RERANK_TOP_K
     ) -> List[Dict[str, Any]]:
         """
         Rerank documents using the LLM model.
@@ -51,7 +51,7 @@ class RerankerService:
         for i, doc in enumerate(documents):
             content = doc.get("payload", {}).get("content", "")
             title = doc.get("payload", {}).get("title", "")
-            # Truncate content if it's too long to avoid token limits, though gpt-5-mini should handle it.
+            # Truncate content if it's too long to avoid token limits, though gpt-4.1-mini should handle it.
             # Let's keep it reasonable, maybe first 500 chars for reranking context if needed, 
             # but user wants accuracy so full content is better. 
             # Assuming documents are chunks, they shouldn't be huge.
@@ -65,17 +65,16 @@ Please follow this Chain of Thoughts process:
 1. Analyze the user's query to understand the specific legal issue, vehicle type, and context.
 2. For each document, analyze its content to see if it addresses the query.
 3. Evaluate the document based on the following 4 criteria:
-    - **Direct Relevance (Sự liên quan trực tiếp):** Does the document explicitly mention the violation, rule, or penalty asked in the query?
-    - **Completeness (Tính đầy đủ):** Does the document provide a complete answer (e.g., fine levels, additional penalties) or just a partial one?
-    - **Contextual Fit (Sự phù hợp ngữ cảnh):** Does the document match the specific context of the query (e.g., correct vehicle type, road type, subject)?
-    - **Utility (Giá trị sử dụng):** Is this document useful for constructing a comprehensive and accurate answer for the user?
+    - **Direct Relevance:** Does the document explicitly mention the violation, rule, or penalty asked in the query?
+    - **Completeness:** Does the document provide a complete answer (e.g., fine levels, additional penalties) or just a partial one?
+    - **Contextual Fit:** Does the document match the specific context of the query (e.g., correct vehicle type, road type, subject)?
+    - **Utility:** Is this document useful for constructing a comprehensive and accurate answer for the user?
 4. Assign a relevance score from 0 to 10 based on these criteria.
 5. Output the results as a JSON object where keys are Document IDs (strings) and values are the scores (floats).
-
-Example format:
 {
-    "0": 8.5,
-    "1": 3.2
+    "id_0": "score of id_0",
+    "id_1": "score of id_1",
+    ...
 }
 """
 
@@ -83,8 +82,7 @@ Example format:
 
 Documents List:
 {docs_content}
-
-Please evaluate the documents and provide the scores in JSON format. Only return the JSON object."""
+"""
 
         try:
             response = await self.client.chat.completions.create(

@@ -3,6 +3,7 @@ from typing import List, Dict, Any, AsyncGenerator
 import json
 import asyncio
 
+from src import config
 from src.services.qdrant_service import qdrant_service
 from src.services.reranker_service import reranker_service
 from src.services.llm_service import llm_service
@@ -25,8 +26,8 @@ class RAGService:
         Process a user query through the RAG pipeline.
         
         Steps:
-        1. Hybrid search to get 100 documents
-        2. Rerank to get exactly top 10 documents with highest scores
+        1. Hybrid search to get documents
+        2. Rerank to get top documents with highest scores
         3. Generate response using LLM
         
         Args:
@@ -40,9 +41,9 @@ class RAGService:
             # Step 1: Hybrid search
             logger.info(f"Processing query: {query}")
             yield json.dumps({"type": "tool_name", "content": "hybrid_search"}) + "\n"
-            yield json.dumps({"type": "tool_args", "content": {"query": query, "limit": 100}}) + "\n"
+            yield json.dumps({"type": "tool_args", "content": {"query": query, "limit": config.HYBRID_SEARCH_TOP_K}}) + "\n"
             
-            search_results = self.qdrant.hybrid_search(query, limit=100)
+            search_results = self.qdrant.hybrid_search(query, limit=config.HYBRID_SEARCH_TOP_K)
             
             yield json.dumps({
                 "type": "tool_content", 
@@ -51,13 +52,13 @@ class RAGService:
             
             # Step 2: Rerank
             yield json.dumps({"type": "tool_name", "content": "rerank"}) + "\n"
-            yield json.dumps({"type": "tool_args", "content": {"model": "gpt-5.1", "top_k": 10}}) + "\n"
+            yield json.dumps({"type": "tool_args", "content": {"model": config.RERANKER_MODEL, "top_k": config.RERANK_TOP_K}}) + "\n"
             
-            # Run reranking (get top 10 with highest scores)
+            # Run reranking (get top K with highest scores)
             reranked_docs = await self.reranker.rerank(
                 query, 
                 search_results, 
-                10
+                config.RERANK_TOP_K
             )
             
             # Format sources for display
@@ -72,7 +73,7 @@ class RAGService:
             
             yield json.dumps({
                 "type": "tool_content", 
-                "content": f"Đã chọn top 10 tài liệu liên quan nhất"
+                "content": f"Đã chọn top {len(reranked_docs)} tài liệu liên quan nhất"
             }) + "\n"
             
             # Step 3: Generate response

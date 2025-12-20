@@ -20,10 +20,10 @@ Hướng dẫn:
    - year: 2021 -> Nghị định 123/2021/NĐ-CP
    - year: 2024 -> Nghị định 168/2024/NĐ-CP
    
-   Ví dụ: Nếu tài liệu có year: 2019, article: 6 thì ghi là "theo nghị định 100/2019/NĐ-CP, điều 6, ...".
-   Nếu có nhiều tài liệu liên quan thì dùng chữ "và" để nối. Ví dụ: "theo nghị định 100/2019/NĐ-CP, điều 6, và nghị định 123/2021/NĐ-CP, điều 5...".
+   Ví dụ: Nếu tài liệu có year: 2019, article: 6 thì ghi là "Căn cứ theo nghị định 100/2019/NĐ-CP, điều 6, ...".
+   Nếu có nhiều tài liệu liên quan thì dùng chữ "và" để nối. Ví dụ: "Căn cứ theo nghị định 100/2019/NĐ-CP, điều 6, và nghị định 123/2021/NĐ-CP, điều 5...".
 
-4. Trả lời bằng tiếng Việt, rõ ràng và dễ hiểu.
+4. Trả lời bằng tiếng Việt, rõ ràng và dễ hiểu. Đặc biệt, trả lời đầy đủ nội dung điều luật
 5. Nếu câu hỏi không liên quan đến luật giao thông, hãy lịch sự từ chối.
 """
 
@@ -95,8 +95,8 @@ Tài liệu tham khảo:
                 model=self.model,
                 messages=messages,
                 stream=True,
-                temperature=0,
-                # reasoning_effort="low",  # Not supported by gpt-4-mini
+                # temperature=0,
+                reasoning_effort="low", 
             )
             
             async for chunk in stream:
