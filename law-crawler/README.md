@@ -1,77 +1,56 @@
-## Crawler
+# Law Crawler - Trích xuất dữ liệu Luật Giao thông
 
-Chạy module này để cào dữ liệu pháp luật từ [Pháp Điển Việt Nam](https://phapdien.moj.gov.vn/) và [Văn bản quy phạm pháp luật](https://vbpl.vn/). Bước này là optional cho hệ thống, bạn có thể bỏ qua nếu không cần dữ liệu ban đầu.
-
-Lấy dữ liệu từ [Pháp Điển Việt Nam](https://phapdien.moj.gov.vn/), tải file zip và giải nén vào thư mục này.
-
-### Cào dữ liệu pháp điển
-
--   Tạo 2 file json từ file jsonData.json gốc:
-    -   chude.json: chứa các chủ đề
-    -   demuc.json: chứa các đề mục
-    -   treeNode: chứa các node là các Phần, Chương, Mục, Tiểu mục, Điều.
--   Cuối cùng thư mục của bạn sẽ có cấu trúc như sau:
-
-```
-phap-dien
-├── chude.json
-├── demuc.json
-├── treeNode.json
-├── demuc/
-│   ├── 1/...
-│   ├── 2/...
-```
-
--   Cài đặt các thư viện cần thiết:
+## Cài đặt
 
 ```bash
-pip install -r requirements.txt
+pip install pypdf pandas
 ```
 
--   Chạy MySQL và PHPMyAdmin containers từ docker-compose:
+## Sử dụng
 
+### 1. Crawl dữ liệu từ PDF
 ```bash
-docker-compose up -d
+python crawl_pdf.py
 ```
 
--   Chạy crawler:
+Script sẽ:
+- Đọc tất cả file PDF trong thư mục `data/`
+- Parse các điều luật, khoản và mức phạt
+- Lưu kết quả vào `output/traffic_laws.json` và `output/traffic_laws.csv`
 
+### 2. Xem thống kê
 ```bash
-python main.py
+python view_stats.py
 ```
 
-Sau khi chạy xong, dữ liệu sẽ được lưu vào DB, bạn có thể export ra bằng PHPAdmin dưới dạng .sql để dùng lại.
+## Cấu trúc dữ liệu
 
-### Cào dữ liệu văn bản quy phạm pháp luật
-
--   Chạy MySQL và PHPMyAdmin containers từ docker-compose:
-
-```bash
-docker-compose up -d
+### JSON
+```json
+{
+  "year": "2019",
+  "article": "5",
+  "title": "Xử phạt người điều khiển xe...",
+  "content": "Nội dung đầy đủ của điều luật",
+  "clauses": [
+    {
+      "clause_number": "1",
+      "content": "Nội dung khoản 1",
+      "fine_info": {
+        "has_fine": true,
+        "fine_range": "200000 - 400000",
+        "violations": ["Vi phạm 1", "Vi phạm 2"]
+      }
+    }
+  ]
+}
 ```
 
--   Tiếp tục từ thư mục ở bước trên, cd vào thư mục này:
+### CSV
+Các cột: year, article, title, clause_number, content, has_fine, fine_amount, fine_range, violations
 
-```bash
-cd document-crawler
-```
+## Kết quả
 
--   Cài đặt các thư viện cần thiết:
-
-```bash
-pip install -r requirements.txt
-```
-
--   Chạy crawler:
-
-```bash
-python main.py
-```
-
--   Phân chia VBQPPL thành các điều
-
-```bash
-python split_document.py
-```
-
-Sau khi chạy xong, dữ liệu VBQPPL và các điều sẽ được lưu vào DB, bạn có thể export ra bằng PHPAdmin dưới dạng .sql để dùng lại.
+- 214 điều luật từ 3 file PDF (2019, 2021, 2024)
+- 1084 khoản luật
+- 132 điều có quy định mức phạt

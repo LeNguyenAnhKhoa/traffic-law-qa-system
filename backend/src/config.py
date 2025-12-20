@@ -8,9 +8,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 SERVER_API_KEY = os.getenv("SERVER_API_KEY")
 
-PORT = int(os.getenv("PORT"))
+PORT = int(os.getenv("PORT", "5000"))
 
-OPENAI_MODEL = "gpt-4o-mini"
+# Qdrant configuration
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6335")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
 API_VERSION = "v0"
 
