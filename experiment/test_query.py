@@ -14,10 +14,10 @@ from dotenv import load_dotenv
 import logging
 
 # Add backend to path
-sys.path.insert(0, str(Path(__file__).parent / "backend"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 # Load environment variables
-root_env = Path(__file__).parent / ".env"
+root_env = Path(__file__).parent.parent / ".env"
 load_dotenv(root_env)
 
 # Initialize logger
@@ -27,7 +27,7 @@ from src.services.qdrant_service import qdrant_service
 from src.services.reranker_service import reranker_service
 
 # Output file for saving results
-OUTPUT_FILE = Path(__file__).parent / "rag_test_output.txt"
+OUTPUT_FILE = Path(__file__).parent / "output" / "rag_test_output.txt"
 
 def print_output(text=""):
     """Print to both console and file."""
