@@ -27,7 +27,7 @@ from src.services.qdrant_service import qdrant_service
 from src.services.reranker_service import reranker_service
 
 # Output file for saving results
-OUTPUT_FILE = Path(__file__).parent / "output" / "rag_test_output.txt"
+OUTPUT_FILE = Path(__file__).parent / "data" / "rag_test_output.txt"
 
 def print_output(text=""):
     """Print to both console and file."""
