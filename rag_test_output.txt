@@ -2,17 +2,47 @@
 
 ╔==============================================================================╗
 ║                    TRAFFIC LAW Q&A SYSTEM - TEST SCRIPT                       ║
-║                     Top 40 Retrieval & Rerank Analysis                     ║
+║                     Top 50 Retrieval & Rerank Analysis                     ║
 ╚==============================================================================╝
 ================================================================================
 TESTING RAG PIPELINE WITH QUERY: Lái xe vượt đèn đỏ phạt bao nhiêu tiền
 ================================================================================
 
 [STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...
-✓ Found 40 documents from hybrid search.
+✓ Found 50 documents from hybrid search.
 
 [STEP 2] Reranking with LLM...
-✓ Reranking complete. Processing 40 documents...
+✓ Reranking complete. Processing 50 documents...
+
+================================================================================
+LLM REASONING
+================================================================================
+The user query is about the penalty for 'Lái xe vượt đèn đỏ' (driving through a red traffic light). The legal term is 'Không chấp hành hiệu lệnh của đèn tín hiệu giao thông'. The subject is the driver, and the vehicle type is unspecified, so all vehicle types are acceptable. 
+
+Documents 0,1,3,4,5 specifically mention penalties for crossing red lights at railway crossings or similar, but these are limited to railway crossing signals, not general traffic lights. They are relevant but not exact matches for general red light violations.
+
+Documents 2,10,11,16,28, and 13,17,24,25,9,22,29,39, etc. relate to various traffic violations but do not mention red light violations explicitly.
+
+Documents 20 and 21 explicitly mention 'Không chấp hành hiệu lệnh của đèn tín hiệu giao thông' (not obeying traffic light signals) for motorbikes (20) and motorbikes with updated 2024 version (21). Document 21 is from 2024 and gives a fine range of 4,000,000 to 6,000,000 VND for motorbikes violating traffic light signals, which is a direct match and the most recent.
+
+Document 25 (2024) mentions for cars (ô tô) 'Không chấp hành hiệu lệnh của đèn tín hiệu giao thông' with a fine from 18,000,000 to 20,000,000 VND, which is a direct match and the most recent for cars.
+
+Document 0 (2019) mentions fines for cars crossing red lights at railway crossings, but this is a different context (railway crossing signals), so less relevant.
+
+Document 21 (2024) is the most relevant and recent for motorbikes.
+Document 25 (2024) is the most relevant and recent for cars.
+
+Documents 20 (2019) and 0 (2019) are older versions or less relevant contexts.
+
+Scoring:
+- Document 21: Exact violation, motorbike context, recent 2024 => A=5, B=3, C=2 => 10
+- Document 25: Exact violation, car context, recent 2024 => A=5, B=3, C=2 => 10
+- Document 20: Exact violation, motorbike, older 2019 => A=5, B=3, C=1 => 9
+- Document 0: Related to red light but at railway crossing, car, 2019 => A=3, B=3, C=1 => 7
+- Document 1,3,4,5,6: Related to red light at railway crossing for other vehicle types or pedestrians, less exact => A=3, B=3, C=1 => 7
+- Other documents unrelated or no mention of red light violation => 0
+
+Final scores assigned accordingly.
 
 ================================================================================
 FINAL TOP DOCUMENTS (Sorted by LLM Score)
@@ -20,7 +50,28 @@ Format: [Rank] | LLM Score (0-10) | Hybrid Score
 ================================================================================
 
 RANK #1
-Scores: LLM 9.00/10 █████████░ | Hybrid: 0.0270
+Scores: LLM 10.00/10 ██████████ | Hybrid: 0.0435
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+Article : 7
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+7. Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng đối với người điều khiển xe thực hiện một 
+trong các hành vi vi phạm sau đây: 
+a) Đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược 
+chiều”, trừ hành vi vi phạm quy định tại điểm b khoản này và các trường hợp xe ưu tiên đang đi 
+làm nhiệm vụ khẩn cấp theo quy định; điều khiển xe đi trên vỉa hè, trừ trường hợp điều khiển xe 
+đi qua vỉa hè để vào nhà, cơ quan; 
+b) Điều khiển xe đi vào đường cao tốc, trừ xe phục vụ việc quản lý, bảo trì đường cao tốc; 
+c) Không chấp hành hiệu lệnh của đèn tín hiệu giao thông;  
+d) Không chấp hành hiệu lệnh, hướng dẫn của người điều khiển giao thông hoặc người kiểm soát 
+giao thông; 
+đ) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
+làm nhiệm vụ.
+--------------------------------------------------------------------------------
+
+RANK #2
+Scores: LLM 10.00/10 ██████████ | Hybrid: 0.0370
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
 Article : 6
@@ -38,28 +89,99 @@ chiều”, trừ các hành vi vi phạm quy định tại điểm đ khoản 1
 tiên đang đi làm nhiệm vụ khẩn cấp theo quy định.
 --------------------------------------------------------------------------------
 
-RANK #2
-Scores: LLM 8.00/10 ████████░░ | Hybrid: 0.0476
+RANK #3
+Scores: LLM 9.00/10 █████████░ | Hybrid: 0.0455
 --------------------------------------------------------------------------------
-Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
+Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
 Article : 6
-Year    : 2024
-Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
-7. Phạt tiền từ 12.000.000 đồng đến 14.000.000 đồng đối với người điều khiển xe thực hiện một 
+Year    : 2019
+Content : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+4. Phạt tiền từ 600.000 đồng đến 1.000.000 đồng đối với người điều khiển xe thực hiện một 
 trong các hành vi vi phạm sau đây: 
-a) Điều khiển xe chạy quá tốc độ quy định trên 35 km/h; 
-b) Điều khiển xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ đi 
-vào đường cao tốc;  
-c) Dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; không có báo hiệu bằng đèn 
-khẩn cấp khi gặp sự cố kỹ thuật hoặc bất khả kháng khác buộc phải dừng xe, đỗ xe ở làn dừng xe 
-khẩn cấp trên đường cao tốc; không có báo hiệu bằng đèn khẩn cấp, không đặt biển cảnh báo 
-“Chú ý xe đỗ” (hoặc đèn cảnh báo) về phía sau xe khoảng cách tối thiểu 150 mét khi dừng xe, đỗ 
-xe trong trường hợp gặp sự cố kỹ thuật hoặc bất khả kháng khác buộc phải dừng xe, đỗ xe trên 
-một phần làn đường xe chạy trên đường cao tốc.
+a) Điều khiển xe chạy quá tốc độ quy định từ 10 km/h đến 20 km/h; 
+b) Dừng xe, đỗ xe trong hầm đường bộ không đúng nơi quy định; 
+c) Vượt xe trong những trường hợp không được vượt, vượt xe tại đoạn đường có biển báo hiệu 
+có nội dung cấm vượt đối với loại phương tiện đang điều khiển, trừ các hành vi vi phạm quy 
+định tại điểm h khoản 3 Điều này; 
+d) Vượt xe trong hầm đường bộ không đúng nơi quy định; quay đầu xe trong hầm đường bộ; 
+đ) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
+làm nhiệm vụ; 
+e) Không chấp hành hiệu lệnh của đèn tín hiệu giao thông; 
+g) Không chấp hành hiệu lệnh, hướng dẫn của người điều khiển giao thông hoặc người kiểm soát 
+giao thông; 
+h) Người đang điều khiển xe sử dụng ô (dù), điện thoại di động, thiết bị âm thanh, trừ thiết bị trợ 
+thính.
 --------------------------------------------------------------------------------
 
-RANK #3
-Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.2500
+RANK #4
+Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.5000
+--------------------------------------------------------------------------------
+Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+Article : 47
+Year    : 2019
+Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+8. Phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng đối với người điều khiển xe ô tô, các loại xe 
+tương tự xe ô tô vượt rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường 
+ngang, cầu chung khi đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác 
+đường ngang, cầu chung khi đi qua đường ngang, cầu chung.
+--------------------------------------------------------------------------------
+
+RANK #5
+Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.3333
+--------------------------------------------------------------------------------
+Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+Article : 47
+Year    : 2019
+Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+7. Phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng đối với người điều khiển máy kéo, xe máy 
+chuyên dùng vượt rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường 
+ngang, cầu chung khi đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác 
+đường ngang, cầu chung khi đi qua đường ngang, cầu chung.
+--------------------------------------------------------------------------------
+
+RANK #6
+Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.2000
+--------------------------------------------------------------------------------
+Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+Article : 47
+Year    : 2019
+Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+5. Phạt tiền từ 600.000 đồng đến 1.000.000 đồng đối với người điều khiển xe mô tô, xe gắn máy 
+(kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vượt rào 
+chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường ngang, cầu chung khi đèn 
+đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác đường ngang, cầu chung 
+khi đi qua đường ngang, cầu chung.
+--------------------------------------------------------------------------------
+
+RANK #7
+Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.1667
+--------------------------------------------------------------------------------
+Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+Article : 47
+Year    : 2019
+Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+3. Phạt tiền từ 100.000 đồng đến 200.000 đồng đối với người điều khiển xe đạp, xe đạp máy, 
+người điều khiển xe thô sơ dừng xe, đỗ xe trong phạm vi an toàn đường ngang, cầu chung; vượt 
+rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường ngang, cầu chung khi 
+đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác đường ngang, cầu 
+chung khi đi qua đường ngang, cầu chung.
+--------------------------------------------------------------------------------
+
+RANK #8
+Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.1429
+--------------------------------------------------------------------------------
+Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+Article : 47
+Year    : 2019
+Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
+1. Phạt tiền từ 60.000 đồng đến 100.000 đồng đối với người đi bộ vượt rào chắn đường ngang, 
+cầu chung khi chắn đang dịch chuyển hoặc đã đóng; vượt qua đường ngang khi đèn đỏ đã bật 
+sáng; không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu, vạch kẻ đường hoặc hướng dẫn của 
+nhân viên gác đường ngang, cầu chung, hầm khi đi qua đường ngang, cầu chung, hầm.
+--------------------------------------------------------------------------------
+
+RANK #9
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.2500
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
 Article : 5
@@ -94,120 +216,26 @@ làm nhiệm vụ;
 i) Điều khiển xe chạy quá tốc độ quy định từ 10 km/h đến 20 km/h.
 --------------------------------------------------------------------------------
 
-RANK #4
-Scores: LLM 7.00/10 ███████░░░ | Hybrid: 0.0417
---------------------------------------------------------------------------------
-Title   : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-Article : 7
-Year    : 2024
-Content : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-7. Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng đối với người điều khiển xe thực hiện một 
-trong các hành vi vi phạm sau đây: 
-a) Đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược 
-chiều”, trừ hành vi vi phạm quy định tại điểm b khoản này và các trường hợp xe ưu tiên đang đi 
-làm nhiệm vụ khẩn cấp theo quy định; điều khiển xe đi trên vỉa hè, trừ trường hợp điều khiển xe 
-đi qua vỉa hè để vào nhà, cơ quan; 
-b) Điều khiển xe đi vào đường cao tốc, trừ xe phục vụ việc quản lý, bảo trì đường cao tốc; 
-c) Không chấp hành hiệu lệnh của đèn tín hiệu giao thông;  
-d) Không chấp hành hiệu lệnh, hướng dẫn của người điều khiển giao thông hoặc người kiểm soát 
-giao thông; 
-đ) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
-làm nhiệm vụ.
---------------------------------------------------------------------------------
-
-RANK #5
-Scores: LLM 6.00/10 ██████░░░░ | Hybrid: 0.0500
---------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-Article : 6
-Year    : 2019
-Content : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-4. Phạt tiền từ 600.000 đồng đến 1.000.000 đồng đối với người điều khiển xe thực hiện một 
-trong các hành vi vi phạm sau đây: 
-a) Điều khiển xe chạy quá tốc độ quy định từ 10 km/h đến 20 km/h; 
-b) Dừng xe, đỗ xe trong hầm đường bộ không đúng nơi quy định; 
-c) Vượt xe trong những trường hợp không được vượt, vượt xe tại đoạn đường có biển báo hiệu 
-có nội dung cấm vượt đối với loại phương tiện đang điều khiển, trừ các hành vi vi phạm quy 
-định tại điểm h khoản 3 Điều này; 
-d) Vượt xe trong hầm đường bộ không đúng nơi quy định; quay đầu xe trong hầm đường bộ; 
-đ) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
-làm nhiệm vụ; 
-e) Không chấp hành hiệu lệnh của đèn tín hiệu giao thông; 
-g) Không chấp hành hiệu lệnh, hướng dẫn của người điều khiển giao thông hoặc người kiểm soát 
-giao thông; 
-h) Người đang điều khiển xe sử dụng ô (dù), điện thoại di động, thiết bị âm thanh, trừ thiết bị trợ 
-thính.
---------------------------------------------------------------------------------
-
-RANK #6
-Scores: LLM 3.00/10 ███░░░░░░░ | Hybrid: 0.5000
---------------------------------------------------------------------------------
-Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-Article : 47
-Year    : 2019
-Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-8. Phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng đối với người điều khiển xe ô tô, các loại xe 
-tương tự xe ô tô vượt rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường 
-ngang, cầu chung khi đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác 
-đường ngang, cầu chung khi đi qua đường ngang, cầu chung.
---------------------------------------------------------------------------------
-
-RANK #7
-Scores: LLM 3.00/10 ███░░░░░░░ | Hybrid: 0.2000
---------------------------------------------------------------------------------
-Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-Article : 47
-Year    : 2019
-Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-5. Phạt tiền từ 600.000 đồng đến 1.000.000 đồng đối với người điều khiển xe mô tô, xe gắn máy 
-(kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vượt rào 
-chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường ngang, cầu chung khi đèn 
-đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác đường ngang, cầu chung 
-khi đi qua đường ngang, cầu chung.
---------------------------------------------------------------------------------
-
-RANK #8
-Scores: LLM 2.00/10 ██░░░░░░░░ | Hybrid: 0.3333
---------------------------------------------------------------------------------
-Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-Article : 47
-Year    : 2019
-Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-7. Phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng đối với người điều khiển máy kéo, xe máy 
-chuyên dùng vượt rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường 
-ngang, cầu chung khi đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác 
-đường ngang, cầu chung khi đi qua đường ngang, cầu chung.
---------------------------------------------------------------------------------
-
-RANK #9
-Scores: LLM 2.00/10 ██░░░░░░░░ | Hybrid: 0.1667
---------------------------------------------------------------------------------
-Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-Article : 47
-Year    : 2019
-Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-3. Phạt tiền từ 100.000 đồng đến 200.000 đồng đối với người điều khiển xe đạp, xe đạp máy, 
-người điều khiển xe thô sơ dừng xe, đỗ xe trong phạm vi an toàn đường ngang, cầu chung; vượt 
-rào chắn đường ngang, cầu chung khi chắn đang dịch chuyển; vượt đường ngang, cầu chung khi 
-đèn đỏ đã bật sáng; không chấp hành hiệu lệnh, chỉ dẫn của nhân viên gác đường ngang, cầu 
-chung khi đi qua đường ngang, cầu chung.
---------------------------------------------------------------------------------
-
 RANK #10
-Scores: LLM 1.00/10 █░░░░░░░░░ | Hybrid: 0.1429
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.1250
 --------------------------------------------------------------------------------
-Title   : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-Article : 47
-Year    : 2019
-Content : Xử phạt các hành vi vi phạm quy định về quy tắc giao thông tại đường ngang, cầu chung, hầm đường sắt
-1. Phạt tiền từ 60.000 đồng đến 100.000 đồng đối với người đi bộ vượt rào chắn đường ngang, 
-cầu chung khi chắn đang dịch chuyển hoặc đã đóng; vượt qua đường ngang khi đèn đỏ đã bật 
-sáng; không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu, vạch kẻ đường hoặc hướng dẫn của 
-nhân viên gác đường ngang, cầu chung, hầm khi đi qua đường ngang, cầu chung, hầm.
+Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy, xe thô sơ thực hiện hành vi vi phạm vận chuyển hành khách, hàng hóa
+Article : 36
+Year    : 2024
+Content : Xử phạt người điều khiển xe mô tô, xe gắn máy, xe thô sơ thực hiện hành vi vi phạm vận chuyển hành khách, hàng hóa
+2. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với một trong các hành vi vi phạm sau đây:  
+a) Chở hành lý, hàng hóa vượt quá khối lượng cho phép của xe;  
+b) Chở hành lý, hàng hóa vượt quá khổ giới hạn cho phép của xe;  
+c) Vận chuyển hàng rời, vật liệu xây dựng, phế thải để rơi vãi xuống đường hoặc gây ra tiếng ồn, 
+bụi bẩn; 
+d) Vận chuyển hàng hóa vượt phía trước, phía sau xe mà không có báo hiệu màu đỏ tại điểm đầu 
+và điểm cuối cùng của hàng hóa khi xe hoạt động ban ngày; vận chuyển hàng hóa vượt phía 
+trước, phía sau xe mà không có đèn hoặc báo hiệu khi xe hoạt động vào ban đêm hoặc khi trời 
+tối.
 --------------------------------------------------------------------------------
 
 RANK #11
-Scores: LLM 1.00/10 █░░░░░░░░░ | Hybrid: 0.1250
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.1111
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
 Article : 5
@@ -247,24 +275,6 @@ cầu vượt, trừ trường hợp tổ chức giao thông tại những khu v
 --------------------------------------------------------------------------------
 
 RANK #12
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.1111
---------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy, xe thô sơ thực hiện hành vi vi phạm vận chuyển hành khách, hàng hóa
-Article : 36
-Year    : 2024
-Content : Xử phạt người điều khiển xe mô tô, xe gắn máy, xe thô sơ thực hiện hành vi vi phạm vận chuyển hành khách, hàng hóa
-2. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với một trong các hành vi vi phạm sau đây:  
-a) Chở hành lý, hàng hóa vượt quá khối lượng cho phép của xe;  
-b) Chở hành lý, hàng hóa vượt quá khổ giới hạn cho phép của xe;  
-c) Vận chuyển hàng rời, vật liệu xây dựng, phế thải để rơi vãi xuống đường hoặc gây ra tiếng ồn, 
-bụi bẩn; 
-d) Vận chuyển hàng hóa vượt phía trước, phía sau xe mà không có báo hiệu màu đỏ tại điểm đầu 
-và điểm cuối cùng của hàng hóa khi xe hoạt động ban ngày; vận chuyển hàng hóa vượt phía 
-trước, phía sau xe mà không có đèn hoặc báo hiệu khi xe hoạt động vào ban đêm hoặc khi trời 
-tối.
---------------------------------------------------------------------------------
-
-RANK #13
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.1000
 --------------------------------------------------------------------------------
 Title   : Xử phạt các hành vi vi phạm quy định về thi công, bảo trì công trình trong phạm vi đất dành cho đường bộ
@@ -281,8 +291,26 @@ không có văn bản thỏa thuận thi công của cơ quan có thẩm quyền
 vi phạm quy định tại điểm a khoản 3 Điều này.
 --------------------------------------------------------------------------------
 
-RANK #14
+RANK #13
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0909
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo), xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+Article : 13
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo), xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+2. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với một trong các hành vi vi phạm sau đây: 
+a) Điều khiển xe không có đủ đèn chiếu sáng, đèn soi biển số, đèn báo hãm, đèn tín hiệu, cần gạt 
+nước, gương chiếu hậu, dây đai an toàn, dụng cụ thoát hiểm, thiết bị chữa cháy, đồng hồ báo áp 
+lực hơi, đồng hồ báo tốc độ của xe hoặc có những thiết bị đó nhưng không có tác dụng, không 
+đúng tiêu chuẩn thiết kế (đối với loại xe được quy định phải có những thiết bị đó), trừ các hành 
+vi vi phạm quy định tại điểm h khoản 3 Điều 20, điểm đ khoản 4 Điều 26 của Nghị định này;  
+b) Điều khiển xe không có còi hoặc có nhưng còi không có tác dụng;  
+c) Điều khiển xe không có bộ phận giảm thanh, giảm khói hoặc có nhưng không có tác dụng, 
+không bảo đảm quy chuẩn môi trường về khí thải, tiếng ồn.
+--------------------------------------------------------------------------------
+
+RANK #14
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0833
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
 Article : 5
@@ -303,24 +331,6 @@ c) Điều khiển xe chạy quá tốc độ quy định trên 35 km/h.
 --------------------------------------------------------------------------------
 
 RANK #15
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0833
---------------------------------------------------------------------------------
-Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo), xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
-Article : 13
-Year    : 2024
-Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo), xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
-2. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với một trong các hành vi vi phạm sau đây: 
-a) Điều khiển xe không có đủ đèn chiếu sáng, đèn soi biển số, đèn báo hãm, đèn tín hiệu, cần gạt 
-nước, gương chiếu hậu, dây đai an toàn, dụng cụ thoát hiểm, thiết bị chữa cháy, đồng hồ báo áp 
-lực hơi, đồng hồ báo tốc độ của xe hoặc có những thiết bị đó nhưng không có tác dụng, không 
-đúng tiêu chuẩn thiết kế (đối với loại xe được quy định phải có những thiết bị đó), trừ các hành 
-vi vi phạm quy định tại điểm h khoản 3 Điều 20, điểm đ khoản 4 Điều 26 của Nghị định này;  
-b) Điều khiển xe không có còi hoặc có nhưng còi không có tác dụng;  
-c) Điều khiển xe không có bộ phận giảm thanh, giảm khói hoặc có nhưng không có tác dụng, 
-không bảo đảm quy chuẩn môi trường về khí thải, tiếng ồn.
---------------------------------------------------------------------------------
-
-RANK #16
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0769
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
@@ -376,7 +386,7 @@ s) Điều khiển xe chạy dưới tốc độ tối thiểu trên những đo
 thiểu cho phép.
 --------------------------------------------------------------------------------
 
-RANK #17
+RANK #16
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0714
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển quá khổ giới hạn, xe quá tải trọng, xe bánh xích lưu hành đường bộ (kể cả xe ô tô chở hành khách)
@@ -396,43 +406,28 @@ d) Điều khiển xe có kích thước bao ngoài vượt quá kích thước 
 định, trừ trường hợp có giấy phép lưu hành còn giá trị sử dụng.
 --------------------------------------------------------------------------------
 
-RANK #18
+RANK #17
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0667
 --------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
-Article : 16
-Year    : 2019
-Content : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
-2. Phạt tiền từ 300.000 đồng đến 400.000 đồng đối với một trong các hành vi vi phạm sau đây: 
-a) Điều khiển xe không có đủ đèn chiếu sáng, đèn soi biển số, đèn báo hãm, đèn tín hiệu, cần gạt 
-nước, gương chiếu hậu, dây an toàn, dụng cụ thoát hiểm, thiết bị chữa cháy, đồng hồ báo áp lực 
-hơi, đồng hồ báo tốc độ của xe hoặc có những thiết bị đó nhưng không có tác dụng, không đúng 
-tiêu chuẩn thiết kế (đối với loại xe được quy định phải có những thiết bị đó), trừ các hành vi vi 
-phạm quy định tại điểm m khoản 3 Điều 23, điểm q khoản 4 Điều 28 Nghị định này; 
-b) Điều khiển xe không có còi hoặc có nhưng còi không có tác dụng; 
-c) Điều khiển xe không có bộ phận giảm thanh, giảm khói hoặc có nhưng không có tác dụng, 
-không bảo đảm quy chuẩn môi trường về khí thải, tiếng ồn.
---------------------------------------------------------------------------------
-
-RANK #19
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0625
---------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
-Article : 5
-Year    : 2019
-Content : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
-6. Phạt tiền từ 6.000.000 đồng đến 8.000.000 đồng đối với người điều khiển xe thực hiện một 
+Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
+Article : 6
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
+7. Phạt tiền từ 12.000.000 đồng đến 14.000.000 đồng đối với người điều khiển xe thực hiện một 
 trong các hành vi vi phạm sau đây: 
-a) Điều khiển xe chạy quá tốc độ quy định trên 20 km/h đến 35 km/h; 
-b) Dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; không có báo hiệu để người lái 
-xe khác biết khi buộc phải dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; quay đầu 
-xe trên đường cao tốc; 
-c) Điều khiển xe trên đường mà trong máu hoặc hơi thở có nồng độ cồn nhưng chưa vượt quá 50 
-miligam/100 mililít máu hoặc chưa vượt quá 0,25 miligam/1 lít khí thở.
+a) Điều khiển xe chạy quá tốc độ quy định trên 35 km/h; 
+b) Điều khiển xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ đi 
+vào đường cao tốc;  
+c) Dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; không có báo hiệu bằng đèn 
+khẩn cấp khi gặp sự cố kỹ thuật hoặc bất khả kháng khác buộc phải dừng xe, đỗ xe ở làn dừng xe 
+khẩn cấp trên đường cao tốc; không có báo hiệu bằng đèn khẩn cấp, không đặt biển cảnh báo 
+“Chú ý xe đỗ” (hoặc đèn cảnh báo) về phía sau xe khoảng cách tối thiểu 150 mét khi dừng xe, đỗ 
+xe trong trường hợp gặp sự cố kỹ thuật hoặc bất khả kháng khác buộc phải dừng xe, đỗ xe trên 
+một phần làn đường xe chạy trên đường cao tốc.
 --------------------------------------------------------------------------------
 
-RANK #20
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0588
+RANK #18
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0625
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
 Article : 16
@@ -449,35 +444,42 @@ c) Điều khiển xe không có bộ phận giảm thanh, giảm khói hoặc c
 không bảo đảm quy chuẩn môi trường về khí thải, tiếng ồn.
 --------------------------------------------------------------------------------
 
-RANK #21
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0556
+RANK #19
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0588
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
 Article : 16
 Year    : 2019
 Content : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
-6. Ngoài việc bị phạt tiền, người điều khiển xe thực hiện hành vi vi phạm còn bị áp dụng các 
-hình thức xử phạt bổ sung sau đây: 
-a) Thực hiện hành vi quy định tại điểm a, điểm b khoản 3; khoản 4; điểm a, điểm e khoản 5 Điều 
-này bị tước quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
-b) Thực hiện hành vi quy định tại điểm a khoản 3, điểm d khoản 4 Điều này bị tịch thu đèn lắp 
-thêm, còi vượt quá âm lượng; 
-c) Thực hiện hành vi quy định tại điểm d, điểm đ khoản 5 Điều này bị tịch thu Giấy chứng nhận, 
-tem kiểm định an toàn kỹ thuật và bảo vệ môi trường, Giấy đăng ký xe, biển số không đúng quy 
-định hoặc bị tẩy xóa; bị tước quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
-d) Thực hiện hành vi quy định tại điểm b, điểm c khoản 5 Điều này bị tịch thu phương tiện (trừ 
-trường hợp xe ô tô từ 10 chỗ ngồi trở lên kinh doanh vận tải hành khách có niên hạn sử dụng 
-vượt quá quy định về điều kiện kinh doanh của hình thức kinh doanh đã đăng ký nhưng chưa quá 
-20 năm tính từ năm sản xuất, xe ô tô dưới 10 chỗ ngồi kinh doanh vận tải hành khách) và bị tước 
-quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
-đ) Thực hiện hành vi quy định tại điểm a khoản 4, điểm đ khoản 5 Điều này trong trường hợp 
-không có Giấy đăng ký xe hoặc sử dụng Giấy đăng ký xe không do cơ quan có thẩm quyền cấp, 
-không đúng số khung, số máy của xe hoặc bị tẩy xóa (kể cả rơ moóc và sơ mi rơ moóc) mà 
-không chứng minh được nguồn gốc xuất xứ của phương tiện (không có giấy tờ, chứng từ chuyển 
-quyền sở hữu xe hoặc giấy tờ, chứng từ nguồn gốc xe hợp pháp) thì bị tịch thu phương tiện.
+2. Phạt tiền từ 300.000 đồng đến 400.000 đồng đối với một trong các hành vi vi phạm sau đây: 
+a) Điều khiển xe không có đủ đèn chiếu sáng, đèn soi biển số, đèn báo hãm, đèn tín hiệu, cần gạt 
+nước, gương chiếu hậu, dây an toàn, dụng cụ thoát hiểm, thiết bị chữa cháy, đồng hồ báo áp lực 
+hơi, đồng hồ báo tốc độ của xe hoặc có những thiết bị đó nhưng không có tác dụng, không đúng 
+tiêu chuẩn thiết kế (đối với loại xe được quy định phải có những thiết bị đó), trừ các hành vi vi 
+phạm quy định tại điểm m khoản 3 Điều 23, điểm q khoản 4 Điều 28 Nghị định này; 
+b) Điều khiển xe không có còi hoặc có nhưng còi không có tác dụng; 
+c) Điều khiển xe không có bộ phận giảm thanh, giảm khói hoặc có nhưng không có tác dụng, 
+không bảo đảm quy chuẩn môi trường về khí thải, tiếng ồn.
 --------------------------------------------------------------------------------
 
-RANK #22
+RANK #20
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0556
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
+Article : 5
+Year    : 2019
+Content : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
+6. Phạt tiền từ 6.000.000 đồng đến 8.000.000 đồng đối với người điều khiển xe thực hiện một 
+trong các hành vi vi phạm sau đây: 
+a) Điều khiển xe chạy quá tốc độ quy định trên 20 km/h đến 35 km/h; 
+b) Dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; không có báo hiệu để người lái 
+xe khác biết khi buộc phải dừng xe, đỗ xe trên đường cao tốc không đúng nơi quy định; quay đầu 
+xe trên đường cao tốc; 
+c) Điều khiển xe trên đường mà trong máu hoặc hơi thở có nồng độ cồn nhưng chưa vượt quá 50 
+miligam/100 mililít máu hoặc chưa vượt quá 0,25 miligam/1 lít khí thở.
+--------------------------------------------------------------------------------
+
+RANK #21
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0526
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô, xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
@@ -532,8 +534,36 @@ p) Điều khiển xe chạy tốc độ thấp hơn các xe khác đi cùng chi
 phải chiều đi của mình, trừ trường hợp các xe khác đi cùng chiều chạy quá tốc độ quy định.
 --------------------------------------------------------------------------------
 
+RANK #22
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0500
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+Article : 16
+Year    : 2019
+Content : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+6. Ngoài việc bị phạt tiền, người điều khiển xe thực hiện hành vi vi phạm còn bị áp dụng các 
+hình thức xử phạt bổ sung sau đây: 
+a) Thực hiện hành vi quy định tại điểm a, điểm b khoản 3; khoản 4; điểm a, điểm e khoản 5 Điều 
+này bị tước quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
+b) Thực hiện hành vi quy định tại điểm a khoản 3, điểm d khoản 4 Điều này bị tịch thu đèn lắp 
+thêm, còi vượt quá âm lượng; 
+c) Thực hiện hành vi quy định tại điểm d, điểm đ khoản 5 Điều này bị tịch thu Giấy chứng nhận, 
+tem kiểm định an toàn kỹ thuật và bảo vệ môi trường, Giấy đăng ký xe, biển số không đúng quy 
+định hoặc bị tẩy xóa; bị tước quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
+d) Thực hiện hành vi quy định tại điểm b, điểm c khoản 5 Điều này bị tịch thu phương tiện (trừ 
+trường hợp xe ô tô từ 10 chỗ ngồi trở lên kinh doanh vận tải hành khách có niên hạn sử dụng 
+vượt quá quy định về điều kiện kinh doanh của hình thức kinh doanh đã đăng ký nhưng chưa quá 
+20 năm tính từ năm sản xuất, xe ô tô dưới 10 chỗ ngồi kinh doanh vận tải hành khách) và bị tước 
+quyền sử dụng Giấy phép lái xe từ 01 tháng đến 03 tháng; 
+đ) Thực hiện hành vi quy định tại điểm a khoản 4, điểm đ khoản 5 Điều này trong trường hợp 
+không có Giấy đăng ký xe hoặc sử dụng Giấy đăng ký xe không do cơ quan có thẩm quyền cấp, 
+không đúng số khung, số máy của xe hoặc bị tẩy xóa (kể cả rơ moóc và sơ mi rơ moóc) mà 
+không chứng minh được nguồn gốc xuất xứ của phương tiện (không có giấy tờ, chứng từ chuyển 
+quyền sở hữu xe hoặc giấy tờ, chứng từ nguồn gốc xe hợp pháp) thì bị tịch thu phương tiện.
+--------------------------------------------------------------------------------
+
 RANK #23
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0455
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0476
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
 Article : 16
@@ -561,7 +591,7 @@ quyền sở hữu xe hoặc giấy tờ, chứng từ nguồn gốc xe hợp ph
 --------------------------------------------------------------------------------
 
 RANK #24
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0435
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0417
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo), xe chở người bốn bánh có gắn động cơ, xe chở hàng bốn bánh có gắn động cơ và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
 Article : 13
@@ -648,7 +678,7 @@ q) Mở cửa xe, để cửa xe mở không bảo đảm an toàn.
 --------------------------------------------------------------------------------
 
 RANK #27
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0370
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0357
 --------------------------------------------------------------------------------
 Title   : Xử phạt các hành vi vi phạm khác về quy tắc giao thông đường bộ
 Article : 11
@@ -659,7 +689,7 @@ Content : Xử phạt các hành vi vi phạm khác về quy tắc giao thông �
 --------------------------------------------------------------------------------
 
 RANK #28
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0357
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0345
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô thực hiện hành vi vi phạm quy định về vận chuyển hàng siêu trường, siêu trọng
 Article : 22
@@ -671,7 +701,7 @@ xếp hàng lên xe) vượt quá quy định trong giấy phép lưu hành.
 --------------------------------------------------------------------------------
 
 RANK #29
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0345
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0333
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô và các loại xe tương tự xe ô tô vi phạm quy tắc giao thông đường bộ
 Article : 5
@@ -688,7 +718,7 @@ c) Điều khiển xe trên đường mà trong máu hoặc hơi thở có nồn
 --------------------------------------------------------------------------------
 
 RANK #30
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0333
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0323
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển xe ô tô (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
 Article : 16
@@ -707,7 +737,7 @@ trong Giấy chứng nhận kiểm định an toàn kỹ thuật và bảo vệ 
 --------------------------------------------------------------------------------
 
 RANK #31
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0323
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0312
 --------------------------------------------------------------------------------
 Title   : Xử phạt các hành vi vi phạm quy định về chấp hành tín hiệu giao thông đường sắt
 Article : 44
@@ -724,7 +754,7 @@ d) Lái tàu tiếp tục cho tàu chạy khi đã nhận được tín hiệu n
 --------------------------------------------------------------------------------
 
 RANK #32
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0312
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0303
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về bảo đảm trật tự, an toàn giao thông đường bộ với xe ô tô vận chuyển hàng hóa
 Article : 21
@@ -741,7 +771,7 @@ và bảo vệ môi trường của xe trên 100% đến 150%.
 --------------------------------------------------------------------------------
 
 RANK #33
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0303
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0294
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về bảo đảm trật tự, an toàn giao thông đường bộ với xe ô tô vận chuyển hàng hóa
 Article : 21
@@ -753,7 +783,20 @@ moóc).
 --------------------------------------------------------------------------------
 
 RANK #34
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0294
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0286
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+Article : 6
+Year    : 2019
+Content : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+5. Phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng đối với người điều khiển xe thực hiện hành vi 
+đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược chiều”, 
+trừ hành vi vi phạm quy định tại điểm b khoản 6 Điều này và các trường hợp xe ưu tiên đang đi 
+làm nhiệm vụ khẩn cấp theo quy định.
+--------------------------------------------------------------------------------
+
+RANK #35
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0278
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về bảo đảm trật tự, an toàn giao thông đường bộ với xe ô tô vận chuyển hàng hóa
 Article : 21
@@ -777,21 +820,8 @@ vượt khối lượng cho phép kéo theo được ghi trong giấy chứng nh
 và bảo vệ môi trường của xe trên 30% đến 50%.
 --------------------------------------------------------------------------------
 
-RANK #35
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0286
---------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-Article : 6
-Year    : 2019
-Content : Xử phạt người điều khiển xe mô tô, xe gắn máy (kể cả xe máy điện), các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
-5. Phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng đối với người điều khiển xe thực hiện hành vi 
-đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược chiều”, 
-trừ hành vi vi phạm quy định tại điểm b khoản 6 Điều này và các trường hợp xe ưu tiên đang đi 
-làm nhiệm vụ khẩn cấp theo quy định.
---------------------------------------------------------------------------------
-
 RANK #36
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0278
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0270
 --------------------------------------------------------------------------------
 Title   : Xử phạt người điều khiển phương tiện giao thông cơ giới đường bộ gắn biển số nước ngoài
 Article : 37
@@ -803,6 +833,41 @@ tuyến đường, đoạn đường được phép hoạt động.
 
 RANK #37
 Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0263
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe máy chuyên dùng vi phạm quy tắc giao thông đường bộ
+Article : 8
+Year    : 2024
+Content : Xử phạt người điều khiển xe máy chuyên dùng vi phạm quy tắc giao thông đường bộ
+3. Phạt tiền từ 800.000 đồng đến 1.000.000 đồng đối với người điều khiển xe thực hiện một 
+trong các hành vi vi phạm sau đây: 
+a) Chạy quá tốc độ quy định từ 05 km/h đến dưới 10 km/h; 
+b) Sử dụng còi, rú ga liên tục; sử dụng còi hơi, sử dụng đèn chiếu xa khi gặp người đi bộ qua 
+đường hoặc khi đi trên đoạn đường qua khu dân cư có hệ thống chiếu sáng đang hoạt động hoặc 
+khi gặp xe đi ngược chiều (trừ trường hợp dải phân cách có khả năng chống chói) hoặc khi 
+chuyển hướng xe tại nơi đường giao nhau, trừ các xe ưu tiên đang đi làm nhiệm vụ theo quy 
+định;  
+c) Không sử dụng hoặc sử dụng không đủ đèn chiếu sáng trong thời gian từ 18 giờ ngày hôm 
+trước đến 06 giờ ngày hôm sau hoặc khi có sương mù, khói, bụi, trời mưa, thời tiết xấu làm hạn 
+chế tầm nhìn;  
+d) Tránh xe, vượt xe không đúng quy định; không nhường đường cho xe đi ngược chiều theo quy 
+định tại nơi đường hẹp, đường dốc, nơi có chướng ngại vật;  
+đ) Điều khiển xe chạy dưới tốc độ tối thiểu trên đoạn đường bộ có quy định tốc độ tối thiểu cho 
+phép.
+--------------------------------------------------------------------------------
+
+RANK #38
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0256
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
+Article : 12
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
+3. Phạt tiền từ 250.000 đồng đến 350.000 đồng đối với cá nhân, từ 500.000 đồng đến 700.000 
+đồng đối với tổ chức để vật che khuất biển báo hiệu đường bộ, đèn tín hiệu giao thông.
+--------------------------------------------------------------------------------
+
+RANK #39
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0250
 --------------------------------------------------------------------------------
 Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về bảo đảm trật tự, an toàn giao thông đường bộ với xe ô tô vận chuyển hàng hóa
 Article : 21
@@ -821,44 +886,6 @@ của công-ten-nơ theo quy định;
 d) Chở công-ten-nơ trên xe (kể cả sơ mi rơ moóc) mà bị cắt nóc trái quy định;  
 đ) Vận chuyển hàng trên xe phải chằng buộc mà không chằng buộc hoặc có chằng buộc nhưng 
 không bảo đảm an toàn theo quy định, trừ hành vi vi phạm quy định tại khoản 10 Điều này.
---------------------------------------------------------------------------------
-
-RANK #38
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0256
---------------------------------------------------------------------------------
-Title   : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
-Article : 12
-Year    : 2024
-Content : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
-3. Phạt tiền từ 250.000 đồng đến 350.000 đồng đối với cá nhân, từ 500.000 đồng đến 700.000 
-đồng đối với tổ chức để vật che khuất biển báo hiệu đường bộ, đèn tín hiệu giao thông.
---------------------------------------------------------------------------------
-
-RANK #39
-Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0250
---------------------------------------------------------------------------------
-Title   : Xử phạt người điều khiển máy kéo, xe máy chuyên dùng (sau đây gọi chung là xe) vi phạm quy tắc giao thông đường bộ
-Article : 7
-Year    : 2019
-Content : Xử phạt người điều khiển máy kéo, xe máy chuyên dùng (sau đây gọi chung là xe) vi phạm quy tắc giao thông đường bộ
-4. Phạt tiền từ 800.000 đồng đến 1.000.000 đồng đối với người điều khiển xe thực hiện một 
-trong các hành vi vi phạm sau đây: 
-a) Chạy quá tốc độ quy định từ 10 km/h đến 20 km/h; 
-b) Chạy xe trong hầm đường bộ không sử dụng đèn chiếu sáng; 
-c) Đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược 
-chiều”, trừ các hành vi vi phạm quy định tại điểm a khoản 8 Điều này và các trường hợp xe ưu 
-tiên đang đi làm nhiệm vụ khẩn cấp theo quy định; 
-d) Không tuân thủ các quy định khi vào hoặc ra đường cao tốc; điều khiển xe chạy ở làn dừng xe 
-khẩn cấp hoặc phần lề đường của đường cao tốc; chuyển làn đường không đúng nơi cho phép 
-hoặc không có tín hiệu báo trước khi chạy trên đường cao tốc; không tuân thủ quy định về 
-khoảng cách an toàn đối với xe chạy liền trước khi chạy trên đường cao tốc; 
-đ) Không tuân thủ các quy định về dừng xe, đỗ xe tại nơi đường bộ giao nhau cùng mức với 
-đường sắt; dừng xe, đỗ xe trong phạm vi an toàn của đường sắt, trừ hành vi vi phạm quy định tại 
-điểm b khoản 2, điểm b khoản 3 Điều 49 Nghị định này; 
-e) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
-làm nhiệm vụ; 
-g) Quay đầu xe tại nơi đường bộ giao nhau cùng mức với đường sắt; quay đầu xe tại nơi đường 
-hẹp, đường dốc, đoạn đường cong tầm nhìn bị che khuất, nơi có biển báo “Cấm quay đầu xe”.
 --------------------------------------------------------------------------------
 
 RANK #40
@@ -888,11 +915,206 @@ dung của giấy vận tải theo quy định hoặc có thiết bị để tru
 lượng chức năng khi có yêu cầu.
 --------------------------------------------------------------------------------
 
+RANK #41
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0238
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển máy kéo, xe máy chuyên dùng (sau đây gọi chung là xe) vi phạm quy tắc giao thông đường bộ
+Article : 7
+Year    : 2019
+Content : Xử phạt người điều khiển máy kéo, xe máy chuyên dùng (sau đây gọi chung là xe) vi phạm quy tắc giao thông đường bộ
+4. Phạt tiền từ 800.000 đồng đến 1.000.000 đồng đối với người điều khiển xe thực hiện một 
+trong các hành vi vi phạm sau đây: 
+a) Chạy quá tốc độ quy định từ 10 km/h đến 20 km/h; 
+b) Chạy xe trong hầm đường bộ không sử dụng đèn chiếu sáng; 
+c) Đi ngược chiều của đường một chiều, đi ngược chiều trên đường có biển “Cấm đi ngược 
+chiều”, trừ các hành vi vi phạm quy định tại điểm a khoản 8 Điều này và các trường hợp xe ưu 
+tiên đang đi làm nhiệm vụ khẩn cấp theo quy định; 
+d) Không tuân thủ các quy định khi vào hoặc ra đường cao tốc; điều khiển xe chạy ở làn dừng xe 
+khẩn cấp hoặc phần lề đường của đường cao tốc; chuyển làn đường không đúng nơi cho phép 
+hoặc không có tín hiệu báo trước khi chạy trên đường cao tốc; không tuân thủ quy định về 
+khoảng cách an toàn đối với xe chạy liền trước khi chạy trên đường cao tốc; 
+đ) Không tuân thủ các quy định về dừng xe, đỗ xe tại nơi đường bộ giao nhau cùng mức với 
+đường sắt; dừng xe, đỗ xe trong phạm vi an toàn của đường sắt, trừ hành vi vi phạm quy định tại 
+điểm b khoản 2, điểm b khoản 3 Điều 49 Nghị định này; 
+e) Không nhường đường hoặc gây cản trở xe được quyền ưu tiên đang phát tín hiệu ưu tiên đi 
+làm nhiệm vụ; 
+g) Quay đầu xe tại nơi đường bộ giao nhau cùng mức với đường sắt; quay đầu xe tại nơi đường 
+hẹp, đường dốc, đoạn đường cong tầm nhìn bị che khuất, nơi có biển báo “Cấm quay đầu xe”.
+--------------------------------------------------------------------------------
+
+RANK #42
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0233
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+Article : 14
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy định về điều kiện của phương tiện khi tham gia giao thông
+1. Phạt tiền từ 400.000 đồng đến 600.000 đồng đối với một trong các hành vi vi phạm sau đây: 
+a) Điều khiển xe không có còi; đèn soi biển số; đèn báo hãm; gương chiếu hậu bên trái người 
+điều khiển hoặc có nhưng không có tác dụng; 
+b) Điều khiển xe không có đèn tín hiệu hoặc có nhưng không có tác dụng; 
+c) Điều khiển xe không có đèn chiếu sáng gần, xa hoặc có nhưng không có tác dụng, không đúng 
+tiêu chuẩn thiết kế; 
+d) Điều khiển xe không có hệ thống hãm hoặc có nhưng không có tác dụng, không bảo đảm tiêu 
+chuẩn kỹ thuật; 
+đ) Điều khiển xe lắp đèn chiếu sáng về phía sau xe.
+--------------------------------------------------------------------------------
+
+RANK #43
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0227
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe bánh xích; xe quá tải trọng, quá khổ giới hạn của cầu, đường (kể cả xe ô tô chở hành khách)
+Article : 33
+Year    : 2021
+Content : Xử phạt người điều khiển xe bánh xích; xe quá tải trọng, quá khổ giới hạn của cầu, đường (kể cả xe ô tô chở hành khách)
+4. Phạt tiền từ 13.000.000 đồng đến 15.000.000 đồng đối với một trong các hành vi vi phạm sau 
+đây: 
+a) Điều khiển xe mà tổng trọng lượng (khối lượng toàn bộ) của xe hoặc tải trọng trục xe (bao 
+gồm cả hàng hóa xếp trên xe, người được chở trên xe) vượt quá tải trọng cho phép của cầu, 
+đường trên 20% đến 50%, trừ trường hợp có Giấy phép lưu hành còn giá trị sử dụng;  
+b) Điều khiển xe có Giấy phép lưu hành còn giá trị sử dụng nhưng tổng trọng lượng (khối lượng 
+toàn bộ) của xe hoặc tải trọng trục xe (bao gồm cả hàng hóa xếp trên xe nếu có) vượt quá quy 
+định trong Giấy phép lưu hành; 
+c) Điều khiển xe có Giấy phép lưu hành còn giá trị sử dụng nhưng đi không đúng tuyến đường 
+quy định trong Giấy phép lưu hành.
+--------------------------------------------------------------------------------
+
+RANK #44
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0222
+--------------------------------------------------------------------------------
+Title   : Xử phạt người đi bộ vi phạm quy tắc giao thông đường bộ
+Article : 10
+Year    : 2024
+Content : Xử phạt người đi bộ vi phạm quy tắc giao thông đường bộ
+1. Phạt tiền từ 150.000 đồng đến 250.000 đồng đối với người đi bộ thực hiện một trong các hành 
+vi vi phạm sau đây: 
+a) Không đi đúng phần đường quy định; vượt qua dải phân cách; đi qua đường không đúng nơi 
+quy định; đi qua đường không có tín hiệu bằng tay theo quy định;  
+b) Không chấp hành hiệu lệnh hoặc chỉ dẫn của đèn tín hiệu, biển báo hiệu, vạch kẻ đường, trừ 
+hành vi vi phạm quy định tại điểm a khoản 2 Điều này; 
+c) Không chấp hành hiệu lệnh, hướng dẫn của người điều khiển giao thông hoặc người kiểm soát 
+giao thông.
+--------------------------------------------------------------------------------
+
+RANK #45
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0217
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe bánh xích; xe quá tải trọng, quá khổ giới hạn của cầu, đường (kể cả xe ô tô chở hành khách)
+Article : 33
+Year    : 2019
+Content : Xử phạt người điều khiển xe bánh xích; xe quá tải trọng, quá khổ giới hạn của cầu, đường (kể cả xe ô tô chở hành khách)
+4. Phạt tiền từ 5.000.000 đồng đến 7.000.000 đồng đối với một trong các hành vi vi phạm sau 
+đây: 
+a) Điều khiển xe mà tổng trọng lượng (khối lượng toàn bộ) của xe hoặc tải trọng trục xe (bao 
+gồm cả hàng hóa xếp trên xe, người được chở trên xe) vượt quá tải trọng cho phép của cầu, 
+đường trên 50% đến 100%, trừ trường hợp có Giấy phép lưu hành còn giá trị sử dụng; 
+b) Điều khiển xe có Giấy phép lưu hành còn giá trị sử dụng nhưng tổng trọng lượng (khối lượng 
+toàn bộ) của xe hoặc tải trọng trục xe (bao gồm cả hàng hóa xếp trên xe nếu có) vượt quá quy 
+định trong Giấy phép lưu hành; 
+c) Điều khiển xe có Giấy phép lưu hành còn giá trị sử dụng nhưng đi không đúng tuyến đường 
+quy định trong Giấy phép lưu hành.
+--------------------------------------------------------------------------------
+
+RANK #46
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0213
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển quá khổ giới hạn, xe quá tải trọng, xe bánh xích lưu hành đường bộ (kể cả xe ô tô chở hành khách)
+Article : 34
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe của người điều khiển quá khổ giới hạn, xe quá tải trọng, xe bánh xích lưu hành đường bộ (kể cả xe ô tô chở hành khách)
+5. Phạt tiền từ 40.000.000 đồng đến 50.000.000 đồng đối với một trong các hành vi vi phạm sau 
+đây: 
+a) Điều khiển xe mà tổng trọng lượng (khối lượng toàn bộ) của xe hoặc tải trọng trục xe (bao 
+gồm cả hàng hóa xếp trên xe, người được chở trên xe) vượt quá tải trọng cho phép của đường bộ 
+trên 50%, trừ trường hợp có giấy phép lưu hành còn giá trị sử dụng; 
+b) Không chấp hành yêu cầu kiểm tra về trọng tải, tải trọng, khổ giới hạn xe, vận chuyển hàng 
+siêu trường, siêu trọng của người thi hành công vụ; chuyển tải hoặc dùng các thủ đoạn khác để 
+trốn tránh việc phát hiện xe chở quá tải, quá khổ.
+--------------------------------------------------------------------------------
+
+RANK #47
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0208
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
+Article : 12
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái xe các hành vi vi phạm khác về quy tắc giao thông đường bộ; sử dụng lòng đường, vỉa hè vào mục đích khác
+10. Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng đối với cá nhân, từ 8.000.000 đồng đến 
+12.000.000 đồng đối với tổ chức thực hiện hành vi không chấp hành yêu cầu kiểm tra, kiểm soát 
+của người thi hành công vụ về bảo đảm trật tự, an toàn giao thông đường bộ, trừ các hành vi vi 
+phạm quy định tại điểm b, điểm d khoản 11 Điều 6; điểm đ, điểm g khoản 9 Điều 7; điểm b, 
+điểm d khoản 9 Điều 8; điểm c khoản 4 Điều 9; điểm b khoản 5 Điều 34 của Nghị định này.
+--------------------------------------------------------------------------------
+
+RANK #48
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0204
+--------------------------------------------------------------------------------
+Title   : Xử phạt người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về vận tải đường bộ
+Article : 24
+Year    : 2019
+Content : Xử phạt người điều khiển xe ô tô tải, máy kéo (bao gồm cả rơ moóc hoặc sơ mi rơ moóc được kéo theo) và các loại xe tương tự xe ô tô vận chuyển hàng hóa vi phạm quy định về vận tải đường bộ
+7. Phạt tiền từ 7.000.000 đồng đến 8.000.000 đồng đối với một trong các hành vi sau đây: 
+a) Điều khiển xe (kể cả rơ moóc và sơ mi rơ moóc) chở hàng vượt trọng tải (khối lượng hàng 
+chuyên chở) cho phép tham gia giao thông được ghi trong Giấy chứng nhận kiểm định an toàn 
+kỹ thuật và bảo vệ môi trường của xe trên 100% đến 150%; 
+b) Điều khiển xe kéo theo rơ moóc, sơ mi rơ moóc mà khối lượng toàn bộ (bao gồm khối lượng 
+bản thân rơ moóc, sơ mi rơ moóc và khối lượng hàng chuyên chở) của rơ moóc, sơ mi rơ moóc 
+vượt khối lượng cho phép kéo theo được ghi trong giấy chứng nhận kiểm định an toàn kỹ thuật 
+và bảo vệ môi trường của xe trên 100% đến 150%.
+--------------------------------------------------------------------------------
+
+RANK #49
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0200
+--------------------------------------------------------------------------------
+Title   : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+Article : 7
+Year    : 2024
+Content : Xử phạt, trừ điểm giấy phép lái của người điều khiển xe mô tô, xe gắn máy, các loại xe tương tự xe mô tô và các loại xe tương tự xe gắn máy vi phạm quy tắc giao thông đường bộ
+3. Phạt tiền từ 600.000 đồng đến 800.000 đồng đối với người điều khiển xe thực hiện một trong 
+các hành vi vi phạm sau đây: 
+a) Chuyển hướng không quan sát hoặc không bảo đảm khoảng cách an toàn với xe phía sau hoặc 
+không giảm tốc độ hoặc không có tín hiệu báo hướng rẽ hoặc có tín hiệu báo hướng rẽ nhưng 
+không sử dụng liên tục trong quá trình chuyển hướng (trừ trường hợp điều khiển xe đi theo 
+hướng cong của đoạn đường bộ ở nơi đường không giao nhau cùng mức); điều khiển xe rẽ trái 
+tại nơi có biển báo hiệu có nội dung cấm rẽ trái đối với loại phương tiện đang điều khiển; điều 
+khiển xe rẽ phải tại nơi có biển báo hiệu có nội dung cấm rẽ phải đối với loại phương tiện đang 
+điều khiển;  
+b) Chở theo từ 03 người trở lên trên xe;  
+c) Dừng xe, đỗ xe trên cầu; 
+d) Điều khiển xe không đi bên phải theo chiều đi của mình; đi không đúng phần đường, làn 
+đường quy định (làn cùng chiều hoặc làn ngược chiều); điều khiển xe đi qua dải phân cách cố 
+định ở giữa hai phần đường xe chạy;  
+đ) Vượt bên phải trong trường hợp không được phép;  
+e) Người đang điều khiển xe hoặc chở người ngồi trên xe bám, kéo, đẩy xe khác, vật khác, dẫn 
+dắt vật nuôi, mang vác vật cồng kềnh; chở người đứng trên yên, giá đèo hàng hoặc ngồi trên tay 
+lái của xe;  
+g) Điều khiển xe kéo theo xe khác, vật khác; 
+h) Chạy trong hầm đường bộ không sử dụng đèn chiếu sáng gần; 
+i) Không giữ khoảng cách an toàn để xảy ra va chạm với xe chạy liền trước hoặc không giữ 
+khoảng cách theo quy định của biển báo hiệu “Cự ly tối thiểu giữa hai xe”; 
+k) Điều khiển xe chạy dàn hàng ngang từ 03 xe trở lên; 
+l) Xe được quyền ưu tiên lắp đặt, sử dụng thiết bị phát tín hiệu ưu tiên không đúng quy định hoặc 
+sử dụng thiết bị phát tín hiệu ưu tiên mà không có giấy phép của cơ quan có thẩm quyền cấp 
+hoặc có giấy phép của cơ quan có thẩm quyền cấp nhưng không còn giá trị sử dụng theo quy 
+định.
+--------------------------------------------------------------------------------
+
+RANK #50
+Scores: LLM 0.00/10 ░░░░░░░░░░ | Hybrid: 0.0196
+--------------------------------------------------------------------------------
+Title   : Vi phạm quy định đối với người điều khiển ô tô và các loại phương tiện tương tự ô tô trong vùng đất cảng
+Article : 17
+Year    : 2021
+Content : Vi phạm quy định đối với người điều khiển ô tô và các loại phương tiện tương tự ô tô trong vùng đất cảng
+4. Phạt tiền từ 10.000.000 đồng đến 12.000.000 đồng đối với người điều khiển ô tô và các loại 
+phương tiện tương tự ô tô chạy quá tốc độ quy định trên 35 km/giờ.
+--------------------------------------------------------------------------------
+
 ================================================================================
 SUMMARY
 ================================================================================
-Original hybrid search results: 40
-Final unique documents printed: 40
+Original hybrid search results: 50
+Final unique documents printed: 50
 
 ================================================================================
 

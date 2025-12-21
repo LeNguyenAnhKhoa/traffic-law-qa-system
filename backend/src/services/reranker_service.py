@@ -1,6 +1,6 @@
 import logging
 import json
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union, Tuple
 from openai import AsyncOpenAI
 from src import config
 
@@ -30,61 +30,88 @@ class RerankerService:
         self, 
         query: str, 
         documents: List[Dict[str, Any]], 
-        top_k: int = config.RERANK_TOP_K
-    ) -> List[Dict[str, Any]]:
+        top_k: int = config.RERANK_TOP_K,
+        return_reasoning: bool = False
+    ) -> Union[List[Dict[str, Any]], Tuple[List[Dict[str, Any]], str]]:
         """
-        Rerank documents using the LLM model.
-        
-        Args:
-            query: The search query
-            documents: List of documents with 'payload' containing 'content'
-            top_k: Number of top results to return
-            
-        Returns:
-            Top-k reranked documents
+        Rerank documents using the LLM model with advanced legal reasoning.
         """
         if not documents:
+            if return_reasoning:
+                return [], ""
             return []
         
         # Prepare documents for the prompt
         docs_content = ""
         for i, doc in enumerate(documents):
-            content = doc.get("payload", {}).get("content", "")
-            title = doc.get("payload", {}).get("title", "")
-            # Truncate content if it's too long to avoid token limits, though gpt-4.1-mini should handle it.
-            # Let's keep it reasonable, maybe first 500 chars for reranking context if needed, 
-            # but user wants accuracy so full content is better. 
-            # Assuming documents are chunks, they shouldn't be huge.
-            docs_content += f"Document ID {i}:\nTitle: {title}\nContent: {content}\n\n"
+            payload = doc.get("payload", {})
+            content = payload.get("content", "")
+            title = payload.get("title", "")
+            year = payload.get("year", "N/A")  # Ensure year is passed explicitly
+            
+            # Formatting document block
+            docs_content += (
+                f"--- Document ID {i} ---\n"
+                f"Year: {year}\n"
+                f"Title: {title}\n"
+                f"Content: {content}\n\n"
+            )
 
-        system_prompt = """You are an expert in Vietnamese traffic law. Your task is to evaluate and rank the relevance of the provided legal documents to the user's query.
+        system_prompt = """You are a Senior Legal Expert AI specialized in Vietnamese Traffic Law (Luật Giao thông đường bộ Việt Nam). 
+Your task is to rerank retrieved legal documents based on their relevance and legal validity regarding a user's natural language query.
 
-IMPORTANT: Assume that all provided documents are 100% accurate and trustworthy. Your sole focus is to determine whether the document is helpful in answering the user's query.
+### 1. TASK DEFINITION
+- **Input:** A user query (often colloquial/informal) and a list of candidate legal documents (formal language).
+- **Goal:** Assign a relevance score (0.0 to 10.0) to each document.
+- **Critical Requirement:** You must bridge the gap between "Colloquial User Intent" and "Formal Legal Terminology" (Semantic Matching).
+- **Temporal Priority:** Vietnamese Traffic Law changes frequently. If two documents cover the exact same violation, **the document with the more recent 'Year' MUST score higher** (e.g., Decree 123/2021 supersedes parts of Decree 100/2019).
 
-Please follow this Chain of Thoughts process:
-1. Analyze the user's query to understand the specific legal issue, vehicle type, and context.
-2. For each document, analyze its content to see if it addresses the query.
-3. Evaluate the document based on the following 4 criteria:
-    - **Direct Relevance (Sự liên quan trực tiếp):** Does the document explicitly mention the violation, rule, or penalty asked in the query?
-    - **Completeness (Tính đầy đủ):** Does the document provide a complete answer (e.g., fine levels, additional penalties) or just a partial one?
-    - **Contextual Fit (Sự phù hợp ngữ cảnh):** Does the document match the specific context of the query (e.g., correct vehicle type, road type, subject)?
-    - **Utility (Giá trị sử dụng):** Is this document useful for constructing a comprehensive and accurate answer for the user?
-4. Assign a relevance score from 0 to 10 based on these criteria.
-5. Output the results as a JSON object where keys are Document IDs (strings) and values are the scores (floats).
+### 2. SCORING RUBRIC (Total: 10 Points)
 
-Example format:
+**A. Semantic Relevance & Intent Match (Max 5.0 points)**
+- **5 pts:** Document identifies the *exact* violation mapped from the query. (e.g., Query: "vượt đèn đỏ" -> Doc: "không chấp hành hiệu lệnh của đèn tín hiệu giao thông"). The penalty/fine is explicitly visible.
+- **3 pts:** Document covers the correct category of violation but lacks specific detail or is a general definition without sanctions.
+- **1 pts:** Vaguely related to the topic (e.g., query about 'speeding', doc about 'lane usage').
+- **0 pts:** Completely irrelevant.
+
+**B. Contextual Accuracy (Max 3.0 points)**
+- **3 pts:** Perfect match for **Vehicle Type** (Car vs. Motorbike vs. Truck) and **Subject** (Driver vs. Owner). If the query not specifies a vehicle type, all the types mentioned in the document are acceptable.
+    * Note: "Xe máy" = "Xe mô tô, xe gắn máy". "Ô tô" = "Xe ô tô".
+- **1 pts:** Matches the violation behavior but for the wrong vehicle type (e.g., Query is about Cars, Doc describes penalty for Motorbikes).
+- **0 pts:** Wrong context entirely.
+
+**C. Temporal Validity & Completeness (Max 2.0 points)**
+- **2 pts:** The document is the **most recent** regulation available in the list for this specific issue (Check 'Year' field). It provides a concrete sanction/fine.
+- **1 pts:** Relevant and correct, but there is another document in the list covering the same issue with a *later* Year. Or the document is older (e.g., Year < 2019) but still potentially valid.
+- **0 pts:** Old/Superseded regulation that contradicts newer documents in the list.
+* Note: This year is 2025, so prefer documents from 2024 than 2021 than 2019.
+### 3. CHAIN OF THOUGHT (Internal Reasoning Process)
+Before outputting JSON, perform these steps silently:
+1.  **Analyze Query:** Identify the core intent (Violation), the Subject (who), and the Object (Vehicle type).
+2.  **Semantic Translation:** Translate user slang to legal terms (e.g., "kẹp 3" -> "chở quá số người quy định", "say rượu" -> "nồng độ cồn").
+3.  **Evaluate Each Document:**
+    - Does the content match the translated legal term?
+    - Does the vehicle type match?
+    - **Compare Years:** Group documents by topic. For the same topic, check which ID has the highest Year. Boost that ID's score.
+4.  **Calculate Final Score:** Sum A + B + C.
+
+### 4. OUTPUT FORMAT
+Return strictly a JSON object. No markdown, no explanation.
+Format:
 {
-    "0": 8.5,
-    "1": 3.2
+    "reason": "Explanation of your reasoning process and how scores were assigned.",
+    "id_0": <float_score>,
+    "id_1": <float_score>,
+    ...
 }
 """
 
-        user_prompt = f"""Query: "{query}"
+        user_prompt = f"""User Query: "{query}"
 
-Documents List:
+Candidate Documents:
 {docs_content}
 
-Please evaluate the documents and provide the scores in JSON format. Only return the JSON object."""
+Perform the analysis and return the JSON scores."""
 
         try:
             response = await self.client.chat.completions.create(
@@ -93,21 +120,23 @@ Please evaluate the documents and provide the scores in JSON format. Only return
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
-                seed=13,
                 temperature=0,
-                # reasoning_effort="low",  # Not supported by gpt-4-mini
                 response_format={"type": "json_object"}
             )
             
             content = response.choices[0].message.content
             scores_map = json.loads(content)
+            reasoning = scores_map.get("reason", "")
             
             # Combine scores with documents
             scored_docs = []
             for i, doc in enumerate(documents):
+                # Handle keys: "0", 0, or "id_0"
                 score = scores_map.get(str(i))
                 if score is None:
-                    score = scores_map.get(i, 0.0) # Try integer key just in case
+                    score = scores_map.get(i)
+                if score is None:
+                    score = scores_map.get(f"id_{i}", 0.0)
                 
                 doc_with_score = doc.copy()
                 doc_with_score["rerank_score"] = float(score)
@@ -116,22 +145,23 @@ Please evaluate the documents and provide the scores in JSON format. Only return
             # Sort by score descending
             scored_docs.sort(key=lambda x: x["rerank_score"], reverse=True)
             
-            # Return top-k documents with highest scores
-            logger.info(f"Reranking complete. Returning top {top_k} out of {len(scored_docs)} documents")
+            if return_reasoning:
+                return scored_docs[:top_k], reasoning
             return scored_docs[:top_k]
             
         except Exception as e:
             logger.error(f"Error during LLM reranking: {e}")
-            # Fallback: return original top_k documents with dummy score if LLM fails
+            # Fallback: return original top_k documents with dummy score
             logger.info("Falling back to original order due to error.")
             fallback_docs = []
             for doc in documents[:top_k]:
                 d = doc.copy()
                 d["rerank_score"] = 0.0
                 fallback_docs.append(d)
+            
+            if return_reasoning:
+                return fallback_docs, f"Error during reranking: {str(e)}"
             return fallback_docs
-
 
 # Singleton instance
 reranker_service = RerankerService()
-

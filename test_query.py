@@ -1,7 +1,7 @@
 """
 Test script to visualize RAG pipeline with a sample query.
 This script demonstrates how documents are retrieved, reranked, and scored.
-MODIFIED: Fetch top 40 hybrid -> Rerank top 40 -> Print all with both scores.
+MODIFIED: Fetch top 50 hybrid -> Rerank top 50 -> Print all with both scores.
 """
 
 import os
@@ -11,6 +11,7 @@ import asyncio
 import argparse
 from pathlib import Path
 from dotenv import load_dotenv
+import logging
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent / "backend"))
@@ -18,6 +19,9 @@ sys.path.insert(0, str(Path(__file__).parent / "backend"))
 # Load environment variables
 root_env = Path(__file__).parent / ".env"
 load_dotenv(root_env)
+
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 from src.services.qdrant_service import qdrant_service
 from src.services.reranker_service import reranker_service
@@ -44,22 +48,37 @@ async def test_rag_pipeline(query: str):
     print_output("=" * 80)
     
     # Step 1: Hybrid Search
-    # UPDATED: Changed limit to 40
+    # UPDATED: Changed limit to 50
     print_output("\n[STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...")
-    search_results = qdrant_service.hybrid_search(query, limit=40)
+    search_results = qdrant_service.hybrid_search(query, limit=50)
     print_output(f"✓ Found {len(search_results)} documents from hybrid search.")
     
     # Step 2: Reranking with LLM
     print_output("\n[STEP 2] Reranking with LLM...")
     
-    # UPDATED: Rerank top 40 (keep all from hybrid search)
-    reranked_docs = await reranker_service.rerank(query, search_results, top_k=40)
+    # UPDATED: Rerank top 50 (keep all from hybrid search)
+    # Now using the service directly to get reasoning
+    reranked_docs, llm_reasoning = await reranker_service.rerank(
+        query, 
+        search_results, 
+        top_k=50, 
+        return_reasoning=True
+    )
+    
     print_output(f"✓ Reranking complete. Processing {len(reranked_docs)} documents...\n")
     
     # Sort by LLM Score (rerank_score) descending
     reranked_docs.sort(key=lambda x: x.get("rerank_score", 0), reverse=True)
 
     # Step 3: Display Results
+    print_output("=" * 80)
+    print_output("LLM REASONING")
+    print_output("=" * 80)
+    if llm_reasoning:
+        print_output(f"{llm_reasoning}\n")
+    else:
+        print_output("(Reasoning not available)\n")
+    
     print_output("=" * 80)
     print_output("FINAL TOP DOCUMENTS (Sorted by LLM Score)")
     print_output("Format: [Rank] | LLM Score (0-10) | Hybrid Score")
@@ -95,8 +114,8 @@ async def test_rag_pipeline(query: str):
             print_output(f"Content : {content}")
             print_output("-" * 80)
             
-            # Stop if we have printed 40 unique docs
-            if count >= 40:
+            # Stop if we have printed 50 unique docs
+            if count >= 50:
                 break
                 
         if count == 0:
@@ -140,7 +159,7 @@ async def main():
     print_output("\n")
     print_output("╔" + "=" * 78 + "╗")
     print_output("║" + " " * 20 + "TRAFFIC LAW Q&A SYSTEM - TEST SCRIPT" + " " * 23 + "║")
-    print_output("║" + " " * 18 + "   Top 40 Retrieval & Rerank Analysis   " + " " * 18 + "║")
+    print_output("║" + " " * 18 + "   Top 50 Retrieval & Rerank Analysis   " + " " * 18 + "║")
     print_output("╚" + "=" * 78 + "╝")
     
     await test_rag_pipeline(query)
