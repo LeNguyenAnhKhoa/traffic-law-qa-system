@@ -104,7 +104,7 @@ async def test_rag_pipeline(query: str):
 
 # Sample queries for testing
 SAMPLE_QUERIES = [
-    "Lái xe máy không đội mũ bảo hiểm bị phạt bao nhiêu?",
+    "Lái ô tô vượt đèn đỏ bị phạt bao nhiêu tiền và có bị trừ điểm bằng lái không?",
     "Chở người ngồi sau xe máy không đội mũ bảo hiểm phạt thế nào?",
     "Lái ô tô vượt đèn đỏ bị phạt bao nhiêu tiền và có bị trừ điểm bằng lái không?",
 ]

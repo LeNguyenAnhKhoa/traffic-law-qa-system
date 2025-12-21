@@ -41,8 +41,32 @@ def parse_traffic_law(text, year):
         clauses = parse_clauses(content)
         
         # Tìm tiêu đề của điều (nếu có)
-        title_match = re.search(r'Điều\s+\d+[a-z]?[\.:](.+?)(?:\n|Khoản|\d\.)', content, re.IGNORECASE)
-        title = title_match.group(1).strip() if title_match else ""
+        # Xác định phần đầu "Điều X."
+        prefix_match = re.match(r'Điều\s+\d+[a-z]?[\.:]', content, re.IGNORECASE)
+        if prefix_match:
+            prefix_end = prefix_match.end()
+            
+            # Tìm vị trí bắt đầu của khoản đầu tiên
+            first_clause_start = len(content)
+            
+            # Pattern để tìm các khoản: "1." hoặc "Khoản 1"
+            clause_patterns = [
+                r'(?:^|\n)(\d+)\.\s+',  # Số thứ tự với dấu chấm
+                r'(?:^|\n)Khoản\s+(\d+)[\.:]'    # "Khoản X"
+            ]
+            
+            for pattern in clause_patterns:
+                # Tìm trong phần còn lại của content
+                match = re.search(pattern, content[prefix_end:])
+                if match:
+                    first_clause_start = prefix_end + match.start()
+                    break
+            
+            title_raw = content[prefix_end:first_clause_start].strip()
+            # Làm sạch tiêu đề: thay thế xuống dòng bằng khoảng trắng
+            title = re.sub(r'\s+', ' ', title_raw).strip()
+        else:
+            title = ""
         
         articles.append({
             'year': year,
