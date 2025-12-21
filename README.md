@@ -1,131 +1,138 @@
 # Traffic Law QA System 🚗
 
-A chatbot system that answers questions about traffic laws using RAG (Retrieval-Augmented Generation) with AI.
+A chatbot system that answers questions about traffic laws using RAG (Retrieval-Augmented Generation).
 
-## 📋 Requirements
+## 📋 Prerequisites
 
-- Python 3.9+
-- Node.js 18+ & pnpm
-- Qdrant Vector Database
-- OpenAI API key
+Ensure you have the following installed on your system:
+- **Python**: 3.9 or higher
+- **Node.js**: 18.0 or higher
+- **npm** (Node Package Manager)
+- **Docker** (optional, for running Qdrant locally)
 
-## 🚀 Quick Start Guide
+## 🚀 How to run
 
-### 1. Prepare Data
+### 1. Environment Setup
+
+The project includes a `.env.example` file. Create a `.env` file in the root directory and fill in your credentials:
 
 ```bash
-# Navigate to law-crawler directory
-cd law-crawler
-
-# Install dependencies
-pip install pypdf pandas
-
-# Crawl data from PDF (place PDF files in data/ folder)
-python crawl_pdf.py
-
-# Output: output/traffic_laws.json
+cp .env.example .env
+# On Windows Command Prompt: copy .env.example .env
+# On Windows PowerShell: Copy-Item .env.example .env
 ```
 
-### 2. Setup Vector Database (Qdrant)
-
-**Option A: Using Docker**
-```bash
-docker run -p 6335:6335 qdrant/qdrant
-```
-
-**Option B: Standalone**
-- Download from: https://qdrant.tech/
-
-### 3. Create .env File
-
-Create `.env` file in the root directory:
+Update the `.env` file with your specific configuration:
 ```env
-OPENAI_API_KEY=your_openai_api_key
-PORT=5000
-QDRANT_URL=http://localhost:6335
-QDRANT_API_KEY=
-OPENAI_MODEL=gpt-4-mini
-RERANKER_MODEL=gpt-4-mini
+# Qdrant Vector Database
+QDRANT_ID=your-qdrant-id
+QDRANT_URL=http://localhost:6335 # Or your cloud URL
+QDRANT_API_KEY=your-qdrant-api-key
+
+# OpenAI & Server Configuration
+OPENAI_API_KEY=your-openai-api-key
+SERVER_API_KEY=your-server-api-key
+BACKEND_PORT=8000
+
+# Frontend Configuration
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_BACKEND_API_KEY=your-server-api-key
 ```
 
-### 4. Setup Backend
+### 2. Install Dependencies
+
+Install the required Python packages:
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Run script to create vector embeddings
-cd vectorDB
-python main.py  # Load traffic_laws.json data into Qdrant
-
-cd ../backend
-
-# Start API server
-python app.py
-# Server running on: http://localhost:5000
 ```
 
-### 5. Setup Frontend
+### 3. Prepare Data (Optional)
+
+If you need to crawl new data:
+
+```bash
+cd law-crawler
+# Place PDF files in data/ folder
+python crawl_data.py
+# Output will be in output/traffic_laws.json
+```
+
+### 4. Setup Vector Database (Not needed if you use Cloud)
+
+Ensure Qdrant is running (e.g., via Docker):
+```bash
+docker run -p 6333:6333 -p 6334:6334 \
+    -v $(pwd)/qdrant_storage:/qdrant/storage:z \
+    qdrant/qdrant
+```
+
+Load data into Qdrant:
+```bash
+cd vectorDB
+python main.py
+```
+
+### 5. Setup Backend
+
+Navigate to the backend directory and start the server:
+
+```bash
+# Navigate to backend folder
+cd backend
+
+# Start the server
+uvicorn app:app --reload
+```
+**Backend runs on:** `http://localhost:8000`
+
+### 6. Setup Frontend
+
+Navigate to the frontend directory:
 
 ```bash
 cd frontend
 
 # Install dependencies
-pnpm install
+npm install
 
 # Run development server
-pnpm dev
-# Frontend running on: http://localhost:3000
+npm run dev
 ```
+**Frontend runs on:** `http://localhost:3000`
 
-### 6. Usage
+### 7. Usage
 
-- Open browser: http://localhost:3000
-- Enter questions about traffic laws
-- Chatbot will answer based on legal data
+1. Open your browser and go to `http://localhost:3000`.
+2. Enter your questions about traffic laws.
+3. The chatbot will respond with answers based on the indexed legal documents.
 
 ## 📁 Project Structure
 
 ```
 traffic-law-qa-system/
 ├── backend/              # FastAPI server
-│   ├── app.py           # Main application
+│   ├── app.py           # Main application entry point
 │   └── src/
-│       ├── routers/     # Chat & health endpoints
-│       ├── services/    # RAG, LLM, Vector DB services
-│       └── schemas/     # Data models
-├── frontend/            # Next.js UI
+│       ├── routers/     # API endpoints
+│       ├── services/    # Business logic (RAG, LLM, Qdrant)
+│       └── schemas/     # Pydantic models
+├── frontend/            # Next.js application
 │   └── src/
-│       ├── app/         # Pages
-│       └── components/  # UI components
-├── law-crawler/         # PDF data extraction
-│   └── output/          # traffic_laws.json
-├── vectorDB/            # Embedding generation
-│   └── main.py
+│       ├── app/         # App router pages
+│       └── components/  # React components
+├── law-crawler/         # Data extraction scripts
+├── vectorDB/            # Vector database management
+├── .env.example         # Environment variables template
 └── requirements.txt     # Python dependencies
 ```
 
 ## 🔑 API Endpoints
 
-- `GET /health` - Server health check
-- `POST /api/agent/chat` - Send question to chatbot
+- `GET /health` - Check server status
+- `POST /api/agent/chat` - Chat endpoint
 
 ## 📝 Important Notes
 
-- Ensure Qdrant is running before starting the backend
-- Valid OPENAI_API_KEY is required
-- Data is embedded using: `jinaai/jina-embeddings-v3`
-
-## 🔧 Troubleshooting
-
-**Qdrant Connection Error:**
-```bash
-# Check if Qdrant is running on port 6335
-curl http://localhost:6335/health
-```
-
-**API Key Error:**
-- Verify OPENAI_API_KEY in .env file
-
-**Frontend Cannot Connect to Backend:**
-- Check CORS configuration in backend/app.py
+- Make sure the `BACKEND_PORT` in `.env` matches the port you expect (default is 8000).
+- The frontend expects the backend to be running at `NEXT_PUBLIC_BACKEND_URL`.

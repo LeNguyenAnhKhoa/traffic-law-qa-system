@@ -1,6 +1,7 @@
 """
 Test script to visualize RAG pipeline with a sample query.
 This script demonstrates how documents are retrieved, reranked, and scored.
+MODIFIED: Fetch top 40 hybrid -> Rerank top 40 -> Print all with both scores.
 """
 
 import os
@@ -43,60 +44,72 @@ async def test_rag_pipeline(query: str):
     print_output("=" * 80)
     
     # Step 1: Hybrid Search
+    # UPDATED: Changed limit to 40
     print_output("\n[STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...")
-    print_output("-" * 80)
-    
-    search_results = qdrant_service.hybrid_search(query, limit=30)
-    print_output(f"✓ Found {len(search_results)} documents from hybrid search (processing...)\n")
+    search_results = qdrant_service.hybrid_search(query, limit=40)
+    print_output(f"✓ Found {len(search_results)} documents from hybrid search.")
     
     # Step 2: Reranking with LLM
-    print_output("\n" + "=" * 80)
-    print_output("[STEP 2] Reranking with LLM (gpt-4.1-mini)...")
-    print_output("-" * 80)
+    print_output("\n[STEP 2] Reranking with LLM...")
     
-    reranked_docs = await reranker_service.rerank(query, search_results, top_k=7)
+    # UPDATED: Rerank top 40 (keep all from hybrid search)
+    reranked_docs = await reranker_service.rerank(query, search_results, top_k=40)
+    print_output(f"✓ Reranking complete. Processing {len(reranked_docs)} documents...\n")
     
-    print_output(f"✓ Reranking complete")
-    print_output(f"✓ Selected top 7 documents with highest scores: {len(reranked_docs)} documents")
-    print_output(f"✓ Verification: Exactly 7 documents (or all available if < 7)? {len(reranked_docs) <= 7}\n")
-    
+    # Sort by LLM Score (rerank_score) descending
+    reranked_docs.sort(key=lambda x: x.get("rerank_score", 0), reverse=True)
+
     # Step 3: Display Results
     print_output("=" * 80)
-    print_output("TOP 7 RERANKED DOCUMENTS (highest scores, sorted by score)")
+    print_output("FINAL TOP DOCUMENTS (Sorted by LLM Score)")
+    print_output("Format: [Rank] | LLM Score (0-10) | Hybrid Score")
     print_output("=" * 80)
     
     if reranked_docs:
-        for idx, doc in enumerate(reranked_docs, 1):
+        seen_content = set() # To ensure uniqueness
+        count = 0
+        
+        for doc in reranked_docs:
             payload = doc.get("payload", {})
-            rerank_score = doc.get("rerank_score", 0)
+            content = payload.get("content", "N/A")
             
-            print_output(f"\n{idx}. {'█' * int(rerank_score)} {rerank_score:.1f}/10")
-            print_output(f"   Title: {payload.get('title', 'N/A')}")
-            print_output(f"   Article: {payload.get('article', 'N/A')}")
-            print_output(f"   Content: {payload.get('content', 'N/A')}")
+            # Deduplication check based on content
+            if content in seen_content:
+                continue
+            seen_content.add(content)
+            
+            count += 1
+            llm_score = doc.get("rerank_score", 0)
+            hybrid_score = doc.get("score", 0) # Qdrant score
+            
+            # Formatting scores
+            bar_len = int(llm_score)
+            visual_bar = '█' * bar_len + '░' * (10 - bar_len)
+            
+            print_output(f"\nRANK #{count}")
+            print_output(f"Scores: LLM {llm_score:.2f}/10 {visual_bar} | Hybrid: {hybrid_score:.4f}")
+            print_output("-" * 80)
+            print_output(f"Title   : {payload.get('title', 'N/A')}")
+            print_output(f"Article : {payload.get('article', 'N/A')}")
+            print_output(f"Year    : {payload.get('year', 'N/A')}")
+            print_output(f"Content : {content}")
+            print_output("-" * 80)
+            
+            # Stop if we have printed 40 unique docs
+            if count >= 40:
+                break
+                
+        if count == 0:
+             print_output("\n⚠ No unique documents found!")
     else:
         print_output("\n⚠ No documents found!")
-        print_output("  This should not happen since we get top 10 by default.")
     
-    # Step 4: Summary Statistics
+    # Step 4: Summary
     print_output("\n" + "=" * 80)
-    print_output("SUMMARY STATISTICS")
+    print_output("SUMMARY")
     print_output("=" * 80)
     print_output(f"Original hybrid search results: {len(search_results)}")
-    print_output(f"After reranking (top 7 by score): {len(reranked_docs)}")
-    
-    # Verify filtering and limit
-    print_output("\n[VERIFICATION]")
-    if reranked_docs:
-        scores = [doc.get("rerank_score", 0) for doc in reranked_docs]
-        print_output(f"✓ Scores sorted in descending order? {all(scores[i] >= scores[i+1] for i in range(len(scores)-1))}")
-        print_output(f"✓ Document count <= 7? {len(reranked_docs) <= 7}")
-        print_output(f"Average rerank score: {sum(scores) / len(scores):.2f}")
-        print_output(f"Max score: {max(scores):.2f}")
-        print_output(f"Min score: {min(scores):.2f}")
-    else:
-        print_output("⚠ No documents found")
-    
+    print_output(f"Final unique documents printed: {len(reranked_docs)}")
     print_output("\n" + "=" * 80)
     
     return reranked_docs
@@ -104,9 +117,7 @@ async def test_rag_pipeline(query: str):
 
 # Sample queries for testing
 SAMPLE_QUERIES = [
-    "Lái ô tô vượt đèn đỏ bị phạt bao nhiêu tiền và có bị trừ điểm bằng lái không?",
-    "Chở người ngồi sau xe máy không đội mũ bảo hiểm phạt thế nào?",
-    "Lái ô tô vượt đèn đỏ bị phạt bao nhiêu tiền và có bị trừ điểm bằng lái không?",
+    "Lái xe vượt đèn đỏ phạt bao nhiêu tiền"
 ]
 
 
@@ -129,18 +140,10 @@ async def main():
     print_output("\n")
     print_output("╔" + "=" * 78 + "╗")
     print_output("║" + " " * 20 + "TRAFFIC LAW Q&A SYSTEM - TEST SCRIPT" + " " * 23 + "║")
-    print_output("║" + " " * 18 + "Visualizing the RAG pipeline with reranking" + " " * 17 + "║")
+    print_output("║" + " " * 18 + "   Top 40 Retrieval & Rerank Analysis   " + " " * 18 + "║")
     print_output("╚" + "=" * 78 + "╝")
     
     await test_rag_pipeline(query)
-    
-    # Optional: test with other queries
-    if not args.query:
-        print_output("\n\n💡 Tip: To test with other queries, pass a query as an argument.")
-        print_output("   Example: python test_query.py \"Your question here\"")
-        print_output("💡 Tip: Available sample queries:")
-        for i, q in enumerate(SAMPLE_QUERIES, 1):
-            print_output(f"   {i}. {q}")
     
     print_output(f"\n\n✅ Output saved to: {OUTPUT_FILE}")
 

@@ -8,13 +8,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 SERVER_API_KEY = os.getenv("SERVER_API_KEY")
 
-PORT = int(os.getenv("PORT", "5000"))
+PORT = int(os.getenv("BACKEND_PORT", "8000"))
 
 # Qdrant configuration
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6335")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
 API_VERSION = "v0"
 
@@ -22,8 +22,8 @@ ERROR_MESSAGE = "We are facing an issue, please try after sometimes."
 
 # Reranker configuration
 RERANKER_MODEL = os.getenv("RERANKER_MODEL", "gpt-4.1-mini")
-HYBRID_SEARCH_TOP_K = int(os.getenv("HYBRID_SEARCH_TOP_K", "30"))
-RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "7"))
+HYBRID_SEARCH_TOP_K = int(os.getenv("HYBRID_SEARCH_TOP_K", "50"))
+RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "10"))
 
 # Embedding models
 DENSE_MODEL_NAME = os.getenv("DENSE_MODEL_NAME", "jinaai/jina-embeddings-v3")

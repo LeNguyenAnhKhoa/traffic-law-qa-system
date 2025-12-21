@@ -108,6 +108,7 @@ class QdrantService:
                 "payload": point.payload
             })
         
+        logger.info(f"Hybrid search returned {len(results)} results for query limit {limit}")
         return results
 
 

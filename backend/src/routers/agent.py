@@ -17,7 +17,7 @@ async def chat(request: ChatRequest):
     Chat endpoint for traffic law Q&A.
     
     Uses RAG pipeline:
-    1. Hybrid search (100 documents)
+    1. Hybrid search (50 documents)
     2. Rerank to top 10
     3. LLM generates response
     

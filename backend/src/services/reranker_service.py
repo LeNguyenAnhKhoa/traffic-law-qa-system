@@ -65,16 +65,17 @@ Please follow this Chain of Thoughts process:
 1. Analyze the user's query to understand the specific legal issue, vehicle type, and context.
 2. For each document, analyze its content to see if it addresses the query.
 3. Evaluate the document based on the following 4 criteria:
-    - **Direct Relevance:** Does the document explicitly mention the violation, rule, or penalty asked in the query?
-    - **Completeness:** Does the document provide a complete answer (e.g., fine levels, additional penalties) or just a partial one?
-    - **Contextual Fit:** Does the document match the specific context of the query (e.g., correct vehicle type, road type, subject)?
-    - **Utility:** Is this document useful for constructing a comprehensive and accurate answer for the user?
+    - **Direct Relevance (Sự liên quan trực tiếp):** Does the document explicitly mention the violation, rule, or penalty asked in the query?
+    - **Completeness (Tính đầy đủ):** Does the document provide a complete answer (e.g., fine levels, additional penalties) or just a partial one?
+    - **Contextual Fit (Sự phù hợp ngữ cảnh):** Does the document match the specific context of the query (e.g., correct vehicle type, road type, subject)?
+    - **Utility (Giá trị sử dụng):** Is this document useful for constructing a comprehensive and accurate answer for the user?
 4. Assign a relevance score from 0 to 10 based on these criteria.
 5. Output the results as a JSON object where keys are Document IDs (strings) and values are the scores (floats).
+
+Example format:
 {
-    "id_0": "score of id_0",
-    "id_1": "score of id_1",
-    ...
+    "0": 8.5,
+    "1": 3.2
 }
 """
 
@@ -82,7 +83,8 @@ Please follow this Chain of Thoughts process:
 
 Documents List:
 {docs_content}
-"""
+
+Please evaluate the documents and provide the scores in JSON format. Only return the JSON object."""
 
         try:
             response = await self.client.chat.completions.create(
@@ -91,6 +93,7 @@ Documents List:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
+                seed=13,
                 temperature=0,
                 # reasoning_effort="low",  # Not supported by gpt-4-mini
                 response_format={"type": "json_object"}
@@ -113,7 +116,8 @@ Documents List:
             # Sort by score descending
             scored_docs.sort(key=lambda x: x["rerank_score"], reverse=True)
             
-            # Return top 10 documents with highest scores (no threshold)
+            # Return top-k documents with highest scores
+            logger.info(f"Reranking complete. Returning top {top_k} out of {len(scored_docs)} documents")
             return scored_docs[:top_k]
             
         except Exception as e:

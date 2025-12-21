@@ -77,7 +77,10 @@ export default function Home() {
         user_id: "abcd-efgh-ijkl-mnop"
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/agent/chat`, {
+      const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/agent/chat`;
+      console.log("Calling API:", apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
