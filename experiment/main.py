@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import asyncio
+import argparse
 import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
@@ -20,17 +21,27 @@ load_dotenv(current_dir.parent / ".env")
 # Lưu ý: Import sau khi đã setup sys.path và load_dotenv
 from src.services.rag_service import rag_service
 
-# Cấu hình logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# --- Cấu hình Logging ---
+# Tạo thư mục logs nếu chưa tồn tại
+LOG_DIR = current_dir / "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = LOG_DIR / "main.log"
+
+# Cấu hình logging để xuất ra cả File và Console
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding='utf-8'), # Ghi vào file logs/main.log
+        logging.StreamHandler(sys.stdout)                # Ghi ra màn hình console
+    ]
+)
 logger = logging.getLogger(__name__)
 
-# --- Đường dẫn file Input/Output ---
-INPUT_FILE = current_dir / "input" / "data.csv"
-OUTPUT_DIR = current_dir / "output"
-OUTPUT_FILE = OUTPUT_DIR / "experiment_result.csv"
-
-# Tạo thư mục output nếu chưa có
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# --- Đường dẫn file Data ---
+# File nằm tại experiment/data/data.csv
+DATA_DIR = current_dir / "data"
+DATA_FILE = DATA_DIR / "data.csv"
 
 async def get_rag_answer(query: str) -> str:
     """
@@ -55,61 +66,93 @@ async def get_rag_answer(query: str) -> str:
     return final_answer
 
 async def main():
+    # --- Xử lý tham số dòng lệnh ---
+    parser = argparse.ArgumentParser(description="Chạy thực nghiệm RAG Traffic Law")
+    parser.add_argument("--start", type=int, default=None, help="ID bắt đầu xử lý")
+    parser.add_argument("--end", type=int, default=None, help="ID kết thúc xử lý")
+    args = parser.parse_args()
+
+    logger.info("============== BẮT ĐẦU PHIÊN CHẠY MỚI ==============")
     logger.info("Bắt đầu quy trình chạy thực nghiệm...")
+    
+    if args.start is not None:
+        logger.info(f"Cấu hình chạy từ ID: {args.start}")
+    if args.end is not None:
+        logger.info(f"Cấu hình chạy đến ID: {args.end}")
 
     # 1. Đọc dữ liệu
-    if not INPUT_FILE.exists():
-        logger.error(f"Không tìm thấy file input tại: {INPUT_FILE}")
+    if not DATA_FILE.exists():
+        logger.error(f"Không tìm thấy file dữ liệu tại: {DATA_FILE}")
         return
 
     try:
-        df = pd.read_csv(INPUT_FILE)
-        logger.info(f"Đã đọc {len(df)} dòng dữ liệu từ {INPUT_FILE}")
+        df = pd.read_csv(DATA_FILE)
+        logger.info(f"Đã đọc {len(df)} dòng dữ liệu từ {DATA_FILE}")
     except Exception as e:
         logger.error(f"Lỗi khi đọc file CSV: {e}")
         return
 
-    # Kiểm tra cột Question
-    if "Question" not in df.columns:
-        logger.error("File CSV không có cột 'Question'")
-        return
+    # Kiểm tra các cột cần thiết
+    required_columns = ["ID", "Question"]
+    for col in required_columns:
+        if col not in df.columns:
+            logger.error(f"File CSV thiếu cột '{col}'")
+            return
 
-    # Đảm bảo cột Our System tồn tại và để kiểu object (string)
+    # Đảm bảo cột Our System tồn tại để ghi kết quả
     if "Our System" not in df.columns:
         df["Our System"] = ""
     
+    # Chuyển cột Our System về dạng string để tránh lỗi
     df["Our System"] = df["Our System"].astype(str)
 
     # 2. Xử lý từng dòng
     total_rows = len(df)
+    processed_count = 0
     
-    # Batch save config (lưu mỗi 10 dòng để tránh mất dữ liệu nếu crash)
-    save_interval = 10 
+    # Batch save config (lưu mỗi 5 dòng để tránh mất dữ liệu nếu crash)
+    save_interval = 5
 
     for index, row in df.iterrows():
+        try:
+            row_id = int(row["ID"])
+        except ValueError:
+            logger.warning(f"Dòng {index}: ID không hợp lệ ({row['ID']}), bỏ qua.")
+            continue
+
+        # --- Logic lọc theo ID ---
+        if args.start is not None and row_id < args.start:
+            continue
+        
+        if args.end is not None and row_id > args.end:
+            continue
+
         question = row["Question"]
-        row_id = row.get("ID", index)
         
         # Bỏ qua nếu câu hỏi rỗng
         if pd.isna(question) or str(question).strip() == "":
+            logger.warning(f"ID {row_id}: Câu hỏi trống, bỏ qua.")
             continue
             
-        logger.info(f"[{index + 1}/{total_rows}] Đang xử lý ID {row_id}: {question[:50]}...")
+        logger.info(f"Đang xử lý ID {row_id}: {str(question)[:50]}...")
         
         # Gọi RAG
         answer = await get_rag_answer(str(question))
         
         # Ghi vào DataFrame
         df.at[index, "Our System"] = answer
+        processed_count += 1
         
-        # Lưu định kỳ
-        if (index + 1) % save_interval == 0:
-            df.to_csv(OUTPUT_FILE, index=False)
-            logger.info(f"Đã lưu checkpoint tại dòng {index + 1}")
+        # Lưu định kỳ vào chính file data.csv
+        if processed_count % save_interval == 0:
+            df.to_csv(DATA_FILE, index=False)
+            logger.info(f"Đã lưu checkpoint (ID vừa xong: {row_id}) vào {DATA_FILE.name}")
 
     # 3. Lưu kết quả cuối cùng
-    df.to_csv(OUTPUT_FILE, index=False)
-    logger.info(f"✅ Hoàn tất! Kết quả đã được lưu tại: {OUTPUT_FILE}")
+    df.to_csv(DATA_FILE, index=False)
+    logger.info(f"✅ Hoàn tất! Đã xử lý {processed_count} câu hỏi.")
+    logger.info(f"Kết quả đã được cập nhật tại: {DATA_FILE}")
+    logger.info("============== KẾT THÚC PHIÊN CHẠY ==============\n")
 
 if __name__ == "__main__":
     try:

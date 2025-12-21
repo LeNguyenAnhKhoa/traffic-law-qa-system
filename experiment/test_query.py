@@ -48,20 +48,20 @@ async def test_rag_pipeline(query: str):
     print_output("=" * 80)
     
     # Step 1: Hybrid Search
-    # UPDATED: Changed limit to 50
+    # UPDATED: Changed limit to 40 (fetching top 40 documents)
     print_output("\n[STEP 1] Running Hybrid Search (Dense + Sparse vectors with RRF fusion)...")
-    search_results = qdrant_service.hybrid_search(query, limit=50)
+    search_results = qdrant_service.hybrid_search(query, limit=40)
     print_output(f"✓ Found {len(search_results)} documents from hybrid search.")
     
     # Step 2: Reranking with LLM
     print_output("\n[STEP 2] Reranking with LLM...")
     
-    # UPDATED: Rerank top 50 (keep all from hybrid search)
+    # UPDATED: Rerank top 5 (scoring and selecting top 5 from 40)
     # Now using the service directly to get reasoning
     reranked_docs, llm_reasoning = await reranker_service.rerank(
         query, 
         search_results, 
-        top_k=50, 
+        top_k=5, 
         return_reasoning=True
     )
     
