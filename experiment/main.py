@@ -17,11 +17,7 @@ sys.path.insert(0, str(backend_dir))
 # Load biến môi trường
 load_dotenv(current_dir.parent / ".env")
 
-# --- Import Service ---
-# Lưu ý: Import sau khi đã setup sys.path và load_dotenv
-from src.services.rag_service import rag_service
-
-# --- Cấu hình Logging ---
+# --- Cấu hình Logging (phải cấu hình TRƯỚC khi import Services) ---
 # Tạo thư mục logs nếu chưa tồn tại
 LOG_DIR = current_dir / "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -30,13 +26,17 @@ LOG_FILE = LOG_DIR / "main.log"
 # Cấu hình logging để xuất ra cả File và Console
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format='%(asctime)s [%(levelname)s] %(message)s',
     handlers=[
         logging.FileHandler(LOG_FILE, encoding='utf-8'), # Ghi vào file logs/main.log
         logging.StreamHandler(sys.stdout)                # Ghi ra màn hình console
     ]
 )
 logger = logging.getLogger(__name__)
+
+# --- Import Service ---
+# Lưu ý: Import sau khi đã setup sys.path, load_dotenv và logging
+from src.services.rag_service import rag_service
 
 # --- Đường dẫn file Data ---
 # File nằm tại experiment/data/data.csv
@@ -161,3 +161,7 @@ if __name__ == "__main__":
         logger.info("Đã dừng chương trình bởi người dùng.")
     except Exception as e:
         logger.error(f"Lỗi không mong muốn: {e}")
+    finally:
+        # Đảm bảo tất cả log được flush trước khi exit
+        for handler in logger.handlers:
+            handler.flush()
