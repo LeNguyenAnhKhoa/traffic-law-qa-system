@@ -1,12 +1,24 @@
 # Traffic Law QA System 🚗
 
-A chatbot system that answers questions about traffic laws using RAG (Retrieval-Augmented Generation).
+## Overview
+
+A comprehensive chatbot system designed to answer questions about traffic laws intelligently using RAG (Retrieval-Augmented Generation). This system combines:
+
+- **Vector Database (Qdrant)**: Efficiently stores and retrieves legal documents using semantic search
+- **LLM Integration**: Leverages advanced language models (OpenAI API) for generating accurate, contextual responses
+- **Reranking Service**: Ensures the most relevant information is prioritized in responses
+- **Web Interface**: User-friendly Next.js frontend for seamless interaction
+- **RESTful API**: Robust FastAPI backend handling all business logic
+
+The system is optimized for accuracy and performance, making it easy for users to find answers to traffic law questions without manually searching through complex legal documents.
+
+![Traffic Law QA System Architecture](docs/flowchart.png)
 
 ## 📋 Prerequisites
 
 Ensure you have the following installed on your system:
-- **Python**: 3.9 or higher
-- **Node.js**: 18.0 or higher
+- **Python**: 3.10.19
+- **Node.js**: v22.19.0
 - **npm** (Node Package Manager)
 - **Docker** (optional, for running Qdrant locally)
 
