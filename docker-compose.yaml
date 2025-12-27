@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # ============================================
+  # Backend Service - FastAPI Application
+  # ============================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: traffic-law-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      # Server Configuration
+      - BACKEND_PORT=8000
+      - SERVER_API_KEY=${SERVER_API_KEY}
+      - API_VERSION=${API_VERSION:-v0}
+      
+      # OpenAI Configuration
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4.1-mini}
+      
+      # Qdrant Cloud Configuration
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      
+      # Reranker & Search Configuration
+      - RERANKER_MODEL=${RERANKER_MODEL:-gpt-4.1-mini}
+      - HYBRID_SEARCH_TOP_K=${HYBRID_SEARCH_TOP_K:-40}
+      - RERANK_TOP_K=${RERANK_TOP_K:-5}
+      
+      # Embedding Models
+      - DENSE_MODEL_NAME=${DENSE_MODEL_NAME:-jinaai/jina-embeddings-v3}
+      - SPARSE_MODEL_NAME=${SPARSE_MODEL_NAME:-Qdrant/bm25}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - traffic-law-network
+
+networks:
+  traffic-law-network:
+    driver: bridge
