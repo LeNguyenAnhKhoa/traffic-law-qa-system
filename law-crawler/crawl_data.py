@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def extract_text_from_pdf(pdf_path):
-    """Trích xuất text từ file PDF"""
+    """Extract text from PDF file."""
     reader = PdfReader(pdf_path)
     text = ""
     for page in reader.pages:
@@ -16,20 +16,20 @@ def extract_text_from_pdf(pdf_path):
 
 
 def parse_traffic_law(text, year):
-    """Parse nội dung luật giao thông thành các điều khoản có cấu trúc"""
+    """Parse traffic law content into structured articles."""
     articles = []
     
-    # Pattern để tìm các điều luật: "Điều X." hoặc "Điều X:"
+    # Pattern to find articles: "Điều X." or "Điều X:"
     article_pattern = r'Điều\s+(\d+[a-z]?)[\.:]'
     
-    # Tách text thành các điều
+    # Split text into articles
     matches = list(re.finditer(article_pattern, text, re.IGNORECASE))
     
     for i, match in enumerate(matches):
         article_num = match.group(1)
         start_pos = match.start()
         
-        # Lấy nội dung từ điều này đến điều tiếp theo (hoặc cuối văn bản)
+        # Get content from this article to the next (or end of text)
         if i < len(matches) - 1:
             end_pos = matches[i + 1].start()
         else:
@@ -37,33 +37,33 @@ def parse_traffic_law(text, year):
         
         content = text[start_pos:end_pos].strip()
         
-        # Parse các khoản trong điều
+        # Parse clauses in the article
         clauses = parse_clauses(content)
         
-        # Tìm tiêu đề của điều (nếu có)
-        # Xác định phần đầu "Điều X."
+        # Find article title (if available)
+        # Identify the prefix "Điều X."
         prefix_match = re.match(r'Điều\s+\d+[a-z]?[\.:]', content, re.IGNORECASE)
         if prefix_match:
             prefix_end = prefix_match.end()
             
-            # Tìm vị trí bắt đầu của khoản đầu tiên
+            # Find the starting position of the first clause
             first_clause_start = len(content)
             
-            # Pattern để tìm các khoản: "1." hoặc "Khoản 1"
+            # Pattern to find clauses: "1." or "Khoản 1"
             clause_patterns = [
-                r'(?:^|\n)(\d+)\.\s+',  # Số thứ tự với dấu chấm
+                r'(?:^|\n)(\d+)\.\s+',  # Numbered with period
                 r'(?:^|\n)Khoản\s+(\d+)[\.:]'    # "Khoản X"
             ]
             
             for pattern in clause_patterns:
-                # Tìm trong phần còn lại của content
+                # Find in remaining content
                 match = re.search(pattern, content[prefix_end:])
                 if match:
                     first_clause_start = prefix_end + match.start()
                     break
             
             title_raw = content[prefix_end:first_clause_start].strip()
-            # Làm sạch tiêu đề: thay thế xuống dòng bằng khoảng trắng
+            # Clean title: replace newlines with spaces
             title = re.sub(r'\s+', ' ', title_raw).strip()
         else:
             title = ""
@@ -80,12 +80,12 @@ def parse_traffic_law(text, year):
 
 
 def parse_clauses(article_content):
-    """Parse các khoản trong một điều luật"""
+    """Parse clauses within an article."""
     clauses = []
     
-    # Pattern để tìm các khoản: "1." hoặc "Khoản 1"
+    # Pattern to find clauses: "1." or "Khoản 1"
     clause_patterns = [
-        r'(?:^|\n)(\d+)\.\s+',  # Số thứ tự với dấu chấm
+        r'(?:^|\n)(\d+)\.\s+',  # Numbered with period
         r'Khoản\s+(\d+)[\.:]'    # "Khoản X"
     ]
     
@@ -103,7 +103,7 @@ def parse_clauses(article_content):
                 
                 clause_content = article_content[start_pos:end_pos].strip()
                 
-                # Tìm mức phạt trong khoản (nếu có)
+                # Find fine information in the clause (if any)
                 fine_info = extract_fine_info(clause_content)
                 
                 clauses.append({
@@ -117,7 +117,7 @@ def parse_clauses(article_content):
 
 
 def extract_fine_info(text):
-    """Trích xuất thông tin về mức phạt"""
+    """Extract fine information from text."""
     fine_info = {
         'has_fine': False,
         'fine_amount': None,
@@ -125,7 +125,7 @@ def extract_fine_info(text):
         'violations': []
     }
     
-    # Tìm mức phạt (VD: "400.000 đồng đến 600.000 đồng", "từ 2.000.000 đến 4.000.000 đồng")
+    # Find fine amount (e.g., "400.000 đồng đến 600.000 đồng", "từ 2.000.000 đến 4.000.000 đồng")
     fine_patterns = [
         r'(?:phạt|phạt tiền)\s+(?:từ\s+)?(\d+(?:\.\d+)*)\s*(?:đồng|triệu)?\s*(?:đến|-)?\s*(\d+(?:\.\d+)*)?\s*(?:đồng|triệu)',
         r'mức\s+phạt\s+(?:từ\s+)?(\d+(?:\.\d+)*)\s*(?:đồng|triệu)?\s*(?:đến|-)?\s*(\d+(?:\.\d+)*)?\s*(?:đồng|triệu)',
@@ -138,7 +138,7 @@ def extract_fine_info(text):
             min_fine = match.group(1).replace('.', '')
             max_fine = match.group(2).replace('.', '') if match.group(2) else None
             
-            # Xử lý đơn vị triệu
+            # Handle million unit
             if 'triệu' in match.group(0).lower():
                 min_fine = str(int(min_fine) * 1000000)
                 if max_fine:
@@ -150,10 +150,10 @@ def extract_fine_info(text):
                 fine_info['fine_amount'] = min_fine
             break
     
-    # Tìm các hành vi vi phạm (thường bắt đầu bằng chữ thường hoặc trong danh sách)
+    # Find violations (usually start with lowercase or in lists)
     violation_patterns = [
         r'[a-z]\)\s*(.+?)(?=\n[a-z]\)|$)',  # a) b) c)...
-        r'-\s*(.+?)(?=\n-|$)',               # Dấu gạch đầu dòng
+        r'-\s*(.+?)(?=\n-|$)',               # Bullet points
     ]
     
     for pattern in violation_patterns:
@@ -166,15 +166,15 @@ def extract_fine_info(text):
 
 
 def save_to_json(data, output_path):
-    """Lưu dữ liệu ra file JSON"""
+    """Save data to JSON file."""
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"✓ Đã lưu file JSON: {output_path}")
+    print(f"✓ Saved JSON file: {output_path}")
 
 
 def save_to_csv(data, output_path):
-    """Lưu dữ liệu ra file CSV"""
-    # Làm phẳng dữ liệu cho CSV
+    """Save data to CSV file."""
+    # Flatten data for CSV
     flat_data = []
     for article in data:
         if article['clauses']:
@@ -192,7 +192,7 @@ def save_to_csv(data, output_path):
                 }
                 flat_data.append(row)
         else:
-            # Nếu không có khoản, lưu toàn bộ điều
+            # If no clauses, save the entire article
             row = {
                 'year': article['year'],
                 'article': article['article'],
@@ -211,64 +211,64 @@ def save_to_csv(data, output_path):
             writer = csv.DictWriter(f, fieldnames=flat_data[0].keys())
             writer.writeheader()
             writer.writerows(flat_data)
-        print(f"✓ Đã lưu file CSV: {output_path}")
+        print(f"✓ Saved CSV file: {output_path}")
 
 
 def main():
-    # Đường dẫn thư mục chứa PDF
+    # Directory path containing PDFs
     data_dir = Path(__file__).parent / 'data'
     output_dir = Path(__file__).parent / 'output'
     output_dir.mkdir(exist_ok=True)
     
-    # Lấy danh sách file PDF
+    # Get list of PDF files
     pdf_files = list(data_dir.glob('*.pdf'))
     
     if not pdf_files:
-        print("Không tìm thấy file PDF nào trong thư mục data/")
+        print("No PDF files found in data/ directory")
         return
     
-    print(f"Tìm thấy {len(pdf_files)} file PDF:")
+    print(f"Found {len(pdf_files)} PDF files:")
     for pdf_file in pdf_files:
         print(f"  - {pdf_file.name}")
     print()
     
     all_articles = []
     
-    # Xử lý từng file PDF
+    # Process each PDF file
     for pdf_file in pdf_files:
-        print(f"Đang xử lý: {pdf_file.name}...")
+        print(f"Processing: {pdf_file.name}...")
         
-        # Lấy năm từ tên file (VD: 2019.pdf -> 2019)
+        # Get year from filename (e.g., 2019.pdf -> 2019)
         year = pdf_file.stem
         
         try:
-            # Trích xuất text từ PDF
+            # Extract text from PDF
             text = extract_text_from_pdf(pdf_file)
             
-            # Parse các điều luật
+            # Parse articles
             articles = parse_traffic_law(text, year)
             all_articles.extend(articles)
             
-            print(f"  ✓ Đã parse {len(articles)} điều luật từ {pdf_file.name}")
+            print(f"  ✓ Parsed {len(articles)} articles from {pdf_file.name}")
             
         except Exception as e:
-            print(f"  ✗ Lỗi khi xử lý {pdf_file.name}: {str(e)}")
+            print(f"  ✗ Error processing {pdf_file.name}: {str(e)}")
     
-    print(f"\nTổng cộng: {len(all_articles)} điều luật")
+    print(f"\nTotal: {len(all_articles)} articles")
     
-    # Lưu kết quả
+    # Save results
     if all_articles:
-        # Lưu ra JSON
+        # Save to JSON
         json_output = output_dir / 'traffic_laws.json'
         save_to_json(all_articles, json_output)
         
-        # Lưu ra CSV
+        # Save to CSV
         csv_output = output_dir / 'traffic_laws.csv'
         save_to_csv(all_articles, csv_output)
         
-        print(f"\n✓ Hoàn thành! Dữ liệu đã được lưu vào thư mục: {output_dir}")
+        print(f"\n✓ Done! Data saved to directory: {output_dir}")
     else:
-        print("\n✗ Không có dữ liệu để lưu")
+        print("\n✗ No data to save")
 
 
 if __name__ == '__main__':

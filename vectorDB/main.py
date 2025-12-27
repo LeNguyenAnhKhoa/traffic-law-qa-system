@@ -1,5 +1,5 @@
 import os
-# Giới hạn số luồng cho ONNX Runtime để tránh ngốn RAM quá nhanh
+# Limit ONNX Runtime threads to prevent excessive RAM usage
 os.environ["OMP_NUM_THREADS"] = "1" 
 os.environ["ONNXRUNTIME_INTRA_OP_NUM_THREADS"] = "1"
 
@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 from dotenv import load_dotenv
 
 from qdrant_client import QdrantClient, models
-# Đã xóa SentenceSplitter vì không còn sử dụng chunking
+# Removed SentenceSplitter since chunking is no longer used
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,9 +33,9 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION_NAME = "traffic_law_qa_system"
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "traffic_laws.json")
 
-# 1. Cập nhật Model Jina AI v3
+# Jina AI v3 embedding model configuration
 DENSE_MODEL_NAME = "jinaai/jina-embeddings-v3"
-DENSE_VECTOR_SIZE = 1024 # Jina v3 mặc định là 1024
+DENSE_VECTOR_SIZE = 1024  # Jina v3 default is 1024
 SPARSE_MODEL_NAME = "Qdrant/bm25"
 
 def main():
@@ -85,7 +85,7 @@ def main():
 
     points = []
     
-    logger.info("Processing data (Full text per clause)...")
+    logger.info("Processing data (full text per clause)...")
     for article in data:
         year = article.get("year", "")
         article_id = article.get("article", "")
@@ -95,18 +95,18 @@ def main():
         for clause in clauses:
             clause_content = clause.get("content", "")
             
-            # Kết hợp title và content thành một khối văn bản duy nhất
+            # Combine title and content into a single text block
             full_text = f"{title}\n{clause_content}"
             
-            # Tạo payload
+            # Create payload
             payload = {
                 "year": year,
                 "article": article_id,
                 "title": title,
-                "content": full_text # Lưu trữ toàn bộ full_text
+                "content": full_text  # Store the full text
             }
             
-            # Tạo Point (Không chia nhỏ chunk, dùng trực tiếp full_text)
+            # Create Point (no chunking, use full_text directly)
             point = models.PointStruct(
                 id=uuid.uuid4().hex,
                 vector={

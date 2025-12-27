@@ -1,10 +1,10 @@
 import json
 
-# Đọc file JSON
+# Read JSON file
 with open('./data/traffic_laws.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-# Tính độ dài content và lưu thông tin chi tiết
+# Calculate content length and store details
 content_lengths = []
 max_length = 0
 max_content_item = None
@@ -24,34 +24,34 @@ for item in data:
                 'length': length
             }
 
-# Thống kê
+# Statistics
 print("=" * 60)
-print("THỐNG KÊ ĐỘ DÀI CONTENT (không tính content trong clauses)")
+print("CONTENT LENGTH STATISTICS (excluding content in clauses)")
 print("=" * 60)
-print(f"Tổng số articles: {len(content_lengths)}")
-print(f"Độ dài content tối đa: {max_length:,} ký tự")
-print(f"Độ dài content trung bình: {sum(content_lengths)/len(content_lengths):,.2f} ký tự")
-print(f"Độ dài content nhỏ nhất: {min(content_lengths):,} ký tự")
+print(f"Total articles: {len(content_lengths)}")
+print(f"Max content length: {max_length:,} characters")
+print(f"Average content length: {sum(content_lengths)/len(content_lengths):,.2f} characters")
+print(f"Min content length: {min(content_lengths):,} characters")
 print()
 
-# Thông tin article có content dài nhất
+# Article with longest content
 if max_content_item:
-    print("Article có content dài nhất:")
-    print(f"  - Năm: {max_content_item['year']}")
-    print(f"  - Điều: {max_content_item['article']}")
-    print(f"  - Tiêu đề: {max_content_item['title']}")
-    print(f"  - Độ dài: {max_content_item['length']:,} ký tự")
+    print("Article with longest content:")
+    print(f"  - Year: {max_content_item['year']}")
+    print(f"  - Article: {max_content_item['article']}")
+    print(f"  - Title: {max_content_item['title']}")
+    print(f"  - Length: {max_content_item['length']:,} characters")
 print()
 
-# Phân bố độ dài
-print("Phân bố độ dài content:")
+# Length distribution
+print("Content length distribution:")
 ranges = [
-    (0, 500, "0-500 ký tự"),
-    (500, 1000, "500-1,000 ký tự"),
-    (1000, 2000, "1,000-2,000 ký tự"),
-    (2000, 5000, "2,000-5,000 ký tự"),
-    (5000, 10000, "5,000-10,000 ký tự"),
-    (10000, float('inf'), ">10,000 ký tự")
+    (0, 500, "0-500 chars"),
+    (500, 1000, "500-1,000 chars"),
+    (1000, 2000, "1,000-2,000 chars"),
+    (2000, 5000, "2,000-5,000 chars"),
+    (5000, 10000, "5,000-10,000 chars"),
+    (10000, float('inf'), ">10,000 chars")
 ]
 
 for min_len, max_len, label in ranges:
@@ -62,30 +62,30 @@ for min_len, max_len, label in ranges:
 
 print()
 print("=" * 60)
-print("GỢI Ý CHIẾN LƯỢC CHUNKING & EMBEDDING")
+print("CHUNKING & EMBEDDING STRATEGY SUGGESTIONS")
 print("=" * 60)
 
-# Ước tính tokens (tiếng Việt thường ~1.5-2 chars/token với nhiều tokenizer)
+# Estimate tokens (Vietnamese usually ~1.5-2 chars/token with most tokenizers)
 max_tokens_estimate = max_length / 1.5
 
-print(f"Ước tính tokens tối đa: ~{max_tokens_estimate:,.0f} tokens")
+print(f"Estimated max tokens: ~{max_tokens_estimate:,.0f} tokens")
 print()
 
 if max_length <= 1000:
-    print("✓ Embedding trực tiếp toàn bộ content (không cần chunk)")
-    print("  Model gợi ý: text-embedding-ada-002 (8191 tokens)")
+    print("✓ Direct embedding of full content (no chunking needed)")
+    print("  Suggested model: text-embedding-ada-002 (8191 tokens)")
 elif max_length <= 5000:
-    print("⚠ Nên xem xét chunking cho content dài")
-    print("  Chiến lược:")
-    print("  - Chunk theo clauses (đã có sẵn trong data)")
-    print("  - Hoặc chunk theo paragraph/sentence với overlap")
+    print("⚠ Consider chunking for long content")
+    print("  Strategy:")
+    print("  - Chunk by clauses (already available in data)")
+    print("  - Or chunk by paragraph/sentence with overlap")
     print("  - Chunk size: 500-1000 tokens, overlap: 100-200 tokens")
 else:
-    print("⚠ Bắt buộc phải chunking")
-    print("  Chiến lược:")
-    print("  - Ưu tiên chunk theo clauses (semantic chunking)")
-    print("  - Nếu clause quá dài, chunk thêm theo paragraph")
+    print("⚠ Chunking is required")
+    print("  Strategy:")
+    print("  - Prefer chunking by clauses (semantic chunking)")
+    print("  - If clause is too long, chunk further by paragraph")
     print("  - Chunk size: 500-800 tokens, overlap: 100-150 tokens")
-    print("  - Metadata: lưu article, year, clause_number để truy vết")
+    print("  - Metadata: save article, year, clause_number for traceability")
 
 print("=" * 60)

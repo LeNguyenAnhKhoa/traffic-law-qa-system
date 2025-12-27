@@ -1,5 +1,5 @@
 import os
-# Giới hạn số luồng cho ONNX Runtime để tránh ngốn RAM quá nhanh
+# Limit ONNX Runtime threads to prevent excessive RAM usage
 os.environ["OMP_NUM_THREADS"] = "1" 
 os.environ["ONNXRUNTIME_INTRA_OP_NUM_THREADS"] = "1"
 import logging

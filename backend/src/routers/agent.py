@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
 from src.schemas.chat import ChatRequest
-from src.services.rag_service import rag_service
+from src.services.agent_service import agent_service
 from src.config import settings
 
 router = APIRouter(
@@ -17,10 +17,11 @@ async def chat(request: ChatRequest):
     """
     Chat endpoint for traffic law Q&A.
     
-    Uses RAG pipeline:
-    1. Hybrid search (40 documents)
-    2. Rerank to top 5
-    3. LLM generates response
+    Uses LangChain Agent with Tool Calling:
+    - Agent decides whether to search database or respond directly
+    - For traffic law questions: Hybrid search -> Rerank -> Generate response
+    - For greetings: Respond directly
+    - For unrelated questions: Politely refuse
     
     Returns streaming response.
     """
@@ -35,7 +36,7 @@ async def chat(request: ChatRequest):
                 })
         
         return StreamingResponse(
-            rag_service.process_query(request.query, chat_history),
+            agent_service.process_query(request.query, chat_history),
             media_type="text/event-stream"
         )
         
