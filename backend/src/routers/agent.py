@@ -3,12 +3,13 @@ from fastapi.responses import StreamingResponse
 
 from src.schemas.chat import ChatRequest
 from src.services.rag_service import rag_service
-from src import config
+from src.config import settings
 
 router = APIRouter(
-    prefix=f"/api/{config.API_VERSION}/agent",
+    prefix=f"/api/{settings.API_VERSION}/agent",
     tags=["Agent"]
 )
+
 
 
 @router.post("/chat")

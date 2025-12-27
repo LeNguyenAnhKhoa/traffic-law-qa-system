@@ -2,11 +2,11 @@ import logging
 import json
 from typing import List, Dict, Any, Union, Tuple
 from openai import AsyncOpenAI
-from src import config
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
-RERANKER_MODEL = config.RERANKER_MODEL
+RERANKER_MODEL = settings.RERANKER_MODEL
 
 
 class RerankerService:
@@ -23,14 +23,14 @@ class RerankerService:
             return
             
         logger.info(f"Initializing reranker with model: {RERANKER_MODEL}...")
-        self.client = AsyncOpenAI(api_key=config.OPENAI_API_KEY)
+        self.client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
         self._initialized = True
     
     async def rerank(
         self, 
         query: str, 
         documents: List[Dict[str, Any]], 
-        top_k: int = config.RERANK_TOP_K,
+        top_k: int = settings.RERANK_TOP_K,
         return_reasoning: bool = False
     ) -> Union[List[Dict[str, Any]], Tuple[List[Dict[str, Any]], str]]:
         """

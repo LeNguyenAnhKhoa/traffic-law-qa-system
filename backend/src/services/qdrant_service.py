@@ -6,23 +6,20 @@ import logging
 from typing import List, Dict, Any
 from pathlib import Path
 
-from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding
-from src import config
-
-# Load .env from root folder
-root_env = Path(__file__).parent.parent.parent.parent.parent / ".env"
-load_dotenv(root_env)
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
+
 # Configuration
-QDRANT_URL = config.QDRANT_URL
-QDRANT_API_KEY = config.QDRANT_API_KEY
+QDRANT_URL = settings.QDRANT_URL
+QDRANT_API_KEY = settings.QDRANT_API_KEY
 COLLECTION_NAME = "traffic_law_qa_system"
-DENSE_MODEL_NAME = config.DENSE_MODEL_NAME
-SPARSE_MODEL_NAME = config.SPARSE_MODEL_NAME
+DENSE_MODEL_NAME = settings.DENSE_MODEL_NAME
+SPARSE_MODEL_NAME = settings.SPARSE_MODEL_NAME
+
 
 
 class QdrantService:

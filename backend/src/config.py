@@ -1,30 +1,46 @@
 import os
+from pathlib import Path
+from typing import List, Union
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv, find_dotenv
+# Calculate paths
+BACKEND_DIR = Path(__file__).parent.parent
+ROOT_DIR = BACKEND_DIR.parent
 
-load_dotenv(find_dotenv())
+class Settings(BaseSettings):
+    # Server
+    BACKEND_PORT: int = 8000
+    SERVER_API_KEY: Union[str, None] = None
+    API_VERSION: str = "v0"
+    
+    # OpenAI
+    OPENAI_API_KEY: str
+    OPENAI_MODEL: str = "gpt-4.1-mini"
+    
+    # Qdrant
+    QDRANT_URL: str = "http://localhost:6335"
+    QDRANT_API_KEY: Union[str, None] = None
+    
+    # Reranker & Search
+    RERANKER_MODEL: str = "gpt-4.1-mini"
+    HYBRID_SEARCH_TOP_K: int = 40
+    RERANK_TOP_K: int = 5
+    
+    # Embedding models
+    DENSE_MODEL_NAME: str = "jinaai/jina-embeddings-v3"
+    SPARSE_MODEL_NAME: str = "Qdrant/bm25"
+    
+    # Constants
+    ERROR_MESSAGE: str = "We are facing an issue, please try after sometimes."
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    model_config = SettingsConfigDict(
+        env_file=[
+            os.path.join(ROOT_DIR, ".env"), 
+            os.path.join(BACKEND_DIR, ".env")
+        ],
+        env_file_encoding='utf-8',
+        extra='ignore'
+    )
 
-SERVER_API_KEY = os.getenv("SERVER_API_KEY")
+settings = Settings()
 
-PORT = int(os.getenv("BACKEND_PORT", "8000"))
-
-# Qdrant configuration
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6335")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-
-API_VERSION = "v0"
-
-ERROR_MESSAGE = "We are facing an issue, please try after sometimes."
-
-# Reranker configuration
-RERANKER_MODEL = os.getenv("RERANKER_MODEL", "gpt-4.1-mini")
-HYBRID_SEARCH_TOP_K = int(os.getenv("HYBRID_SEARCH_TOP_K", "40"))
-RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "5"))
-
-# Embedding models
-DENSE_MODEL_NAME = os.getenv("DENSE_MODEL_NAME", "jinaai/jina-embeddings-v3")
-SPARSE_MODEL_NAME = os.getenv("SPARSE_MODEL_NAME", "Qdrant/bm25")

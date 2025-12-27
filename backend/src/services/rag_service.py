@@ -3,7 +3,7 @@ from typing import List, Dict, Any, AsyncGenerator
 import json
 import asyncio
 
-from src import config
+from src.config import settings
 from src.services.qdrant_service import qdrant_service
 from src.services.reranker_service import reranker_service
 from src.services.llm_service import llm_service
@@ -41,24 +41,25 @@ class RAGService:
             # Step 1: Hybrid search
             logger.info(f"Processing query: {query}")
             yield json.dumps({"type": "tool_name", "content": "hybrid_search"}) + "\n"
-            yield json.dumps({"type": "tool_args", "content": {"query": query, "limit": config.HYBRID_SEARCH_TOP_K}}) + "\n"
+            yield json.dumps({"type": "tool_args", "content": {"query": query, "limit": settings.HYBRID_SEARCH_TOP_K}}) + "\n"
             
-            search_results = self.qdrant.hybrid_search(query, limit=config.HYBRID_SEARCH_TOP_K)
+            search_results = self.qdrant.hybrid_search(query, limit=settings.HYBRID_SEARCH_TOP_K)
             
             yield json.dumps({
                 "type": "tool_content", 
                 "content": f"Tìm thấy {len(search_results)} kết quả"
+
             }) + "\n"
             
             # Step 2: Rerank
             yield json.dumps({"type": "tool_name", "content": "rerank"}) + "\n"
-            yield json.dumps({"type": "tool_args", "content": {"model": config.RERANKER_MODEL, "top_k": config.RERANK_TOP_K}}) + "\n"
+            yield json.dumps({"type": "tool_args", "content": {"model": settings.RERANKER_MODEL, "top_k": settings.RERANK_TOP_K}}) + "\n"
             
             # Run reranking (get top K with highest scores)
             reranked_docs = await self.reranker.rerank(
                 query, 
                 search_results, 
-                config.RERANK_TOP_K
+                settings.RERANK_TOP_K
             )
             
             # Format sources for display
