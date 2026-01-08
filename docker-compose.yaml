@@ -5,10 +5,7 @@ services:
   # Backend Service - FastAPI Application
   # ============================================
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
+    image: traffic-law-backend:v1
     container_name: traffic-law-backend
     restart: unless-stopped
     ports:

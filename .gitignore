@@ -67,7 +67,4 @@ logs/
 *.sqlite
 *.sqlite3
 
-# Docker
-.dockerignore
-
 .vscode/

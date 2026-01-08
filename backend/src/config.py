@@ -4,8 +4,7 @@ from typing import List, Union
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Calculate paths
-BACKEND_DIR = Path(__file__).parent.parent
-ROOT_DIR = BACKEND_DIR.parent
+ROOT_DIR = Path(__file__).parent.parent.parent
 
 class Settings(BaseSettings):
     # Server
@@ -35,8 +34,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=[
-            os.path.join(ROOT_DIR, ".env"), 
-            os.path.join(BACKEND_DIR, ".env")
+            os.path.join(ROOT_DIR, ".env"),
         ],
         env_file_encoding='utf-8',
         extra='ignore'
