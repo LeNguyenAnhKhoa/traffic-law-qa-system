@@ -60,6 +60,10 @@ jobs:
         run: isort --check-only backend
         continue-on-error: true
 
+      - name: Run tests with pytest
+        run: pytest
+
+
   # ============================================
   # Job 2: Build Docker Image
   # ============================================
@@ -71,6 +75,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Lowercase image name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -100,6 +107,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Lowercase image name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -146,31 +156,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Option 1: Deploy to VPS via SSH
-      # - name: Deploy to VPS
-      #   uses: appleboy/ssh-action@v1.0.3
-      #   with:
-      #     host: ${{ secrets.VPS_HOST }}
-      #     username: ${{ secrets.VPS_USERNAME }}
-      #     key: ${{ secrets.VPS_SSH_KEY }}
-      #     script: |
-      #       cd /path/to/your/app
-      #       docker compose pull
-      #       docker compose up -d
-
-      # Option 2: Deploy to Railway
-      # - name: Deploy to Railway
-      #   uses: bervProject/railway-deploy@main
-      #   with:
-      #     railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      #     service: backend
-
-      # Option 3: Deploy to Render
-      # - name: Deploy to Render
-      #   run: |
-      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-
-      - name: Deployment placeholder
+      - name: Deploy to Render
         run: |
-          echo "🚀 Deployment step - Configure based on your hosting provider"
-          echo "See docs/DEPLOYMENT.md for deployment options"
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

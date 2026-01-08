@@ -87,6 +87,10 @@ python main.py
 
 ### 5. Setup Backend
 
+You have two options to run the backend:
+
+#### Option 1: Run locally
+
 Navigate to the backend directory and start the server:
 
 ```bash
@@ -97,6 +101,18 @@ cd backend
 uvicorn app:app --reload
 ```
 **Backend runs on:** `http://localhost:8000`
+
+#### Option 2: Run with Docker
+
+You can pull the pre-built image from Docker Hub and run it using Docker Compose:
+
+```bash
+# Pull the image
+docker pull khoadeptraivai/traffic-law-backend:v1
+
+# Run with Docker Compose
+docker-compose up -d
+```
 
 ### 6. Setup Frontend
 
@@ -118,6 +134,37 @@ npm run dev
 1. Open your browser and go to `http://localhost:3000`.
 2. Enter your questions about traffic laws.
 3. The chatbot will respond with answers based on the indexed legal documents.
+
+## 🌍 Deployment
+
+### 1. Build and Push Docker Image
+
+To build and push your own backend image:
+
+```bash
+# Build the image
+docker build -t khoadeptraivai/traffic-law-backend:v1 .
+
+# Push to Docker Hub
+docker push khoadeptraivai/traffic-law-backend:v1
+```
+
+### 2. Deploy Backend on Render
+
+1. Create a [Render](https://render.com/) account.
+2. Create a new **Web Service**.
+3. Choose "Deploy an existing image from a registry" or connect your repository.
+4. Use the image: `khoadeptraivai/traffic-law-backend:v1`.
+5. Add environment variables from your `.env` file.
+6. Click **Create Web Service**.
+
+### 3. Deploy Frontend on Vercel
+
+1. Create a [Vercel](https://vercel.com/) account.
+2. Import your GitHub repository.
+3. Select the `frontend` directory as the root.
+4. Set environment variables (e.g., `NEXT_PUBLIC_BACKEND_URL`).
+5. Click **Deploy**.
 
 ## 📁 Project Structure
 
