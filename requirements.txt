@@ -34,3 +34,7 @@ langgraph==1.0.5
 jinja2==3.1.6
 pydantic-settings==2.12.0
 structlog==25.5.0
+
+# Testing
+httpx==0.28.1
+pytest==9.0.2

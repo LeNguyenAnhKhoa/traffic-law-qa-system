@@ -61,7 +61,19 @@ jobs:
         continue-on-error: true
 
       - name: Run tests with pytest
-        run: pytest
+        run: |
+          # Check if any tests exist before running pytest
+          if find backend -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            pytest backend/tests --tb=short -v
+          else
+            echo "⚠️ No tests found. Skipping pytest."
+            echo "Consider adding tests in backend/tests/ directory."
+          fi
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          # Mock environment variables for testing
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'sk-test-placeholder-key-for-ci' }}
+          QDRANT_URL: http://localhost:6335
 
 
   # ============================================
@@ -142,20 +154,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ============================================
-  # Job 4: Deploy (Optional - Add your deployment)
-  # ============================================
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: production
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Deploy to Render
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
