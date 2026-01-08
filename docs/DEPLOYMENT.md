@@ -92,10 +92,7 @@ python main.py
 
 ```bash
 # Build image
-docker build -t traffic-law-backend .
-
-# Hoặc build với tag cụ thể
-docker build -t traffic-law-backend:v1.0.0 .
+docker build -t traffic-law-backend:v1 .
 ```
 
 #### Chạy Container
