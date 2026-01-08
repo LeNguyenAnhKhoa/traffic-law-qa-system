@@ -10,6 +10,7 @@ services:
     env_file:
       - .env
     environment:
+      - PYTHONPATH=/app/backend  
       - API_VERSION=${API_VERSION:-v0}
       - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4.1-mini}
       - RERANKER_MODEL=${RERANKER_MODEL:-gpt-4.1-mini}
